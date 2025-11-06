@@ -8,16 +8,14 @@ body {
   margin: auto; 
 }
 
-/* container for all food cards */
 #foodCardArray {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* makes 2 columns */
-  gap: 15px; /* space between cards */
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
   justify-content: center;
   align-content: start;
 }
 
-/* each individual food card */
 .foodCards {
   background-color: #fff;
   border-radius: 18px;
@@ -38,7 +36,6 @@ body {
   margin-top: 8px;
 }
 
-/* rating stars */
 .stars span {
   font-size: 22px;
   cursor: pointer;
