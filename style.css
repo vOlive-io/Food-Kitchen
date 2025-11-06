@@ -3,7 +3,7 @@
 body { 
   font-family: 'Delius', 'Oregano', cursive;
   padding: 20px; 
-  max-width: 400px; 
+  max-width: 550px; 
   margin: auto; 
   text-align: center;
 }
@@ -35,7 +35,7 @@ button:hover {
 
 #foodCardArray {
   align-content: center;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   display: grid;
   width: 100%;
   gap: 15px;
@@ -44,17 +44,19 @@ button:hover {
 .foodCards {
   background: #fff8f0;
   margin-bottom: 10px;
-  padding: 15px;
-  border-radius: 18px;
+  padding: 25px;
+  border-radius: 28px;
   border: black 2.5px solid;
-  width: 100%;
+  width: 80%;
   text-align: center;
 }
 
 .foodCards img {
-  width: 100%;
+  width: 30vw;
+  height: 30vw;
   border-radius: 12px;
   margin-top: 10px;
+  
 }
 
 /* ⭐ STAR RATING SYSTEM */
