@@ -46,8 +46,9 @@ body {
 .stars span.active {
   color: gold;
 }
+
+/* Optional hover effect */
 .stars span:hover,
 .stars span:hover ~ span {
   color: gold;
 }
-
