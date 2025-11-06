@@ -8,6 +8,7 @@ const firebaseConfig = {
   appId: "1:803378208472:web:bb30cf298391ba16d901ad",
   measurementId: "G-29DDTPH087"
 };
+let imageUrl = 'https://via.placeholder.com/150?text=No+Image';
 
 // ✅ Initialize Firebase + Firestore + Storage
 const app = firebase.initializeApp(firebaseConfig);
