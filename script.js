@@ -1,6 +1,6 @@
 // ✅ Initialize Firebase
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "YOUR_API_KEY_HERE",
   authDomain: "foodkitchen-37f44.firebaseapp.com",
   projectId: "foodkitchen-37f44",
   storageBucket: "foodkitchen-37f44.firebasestorage.app",
@@ -42,7 +42,7 @@ addFoodButton.addEventListener("click", async () => {
   }
 });
 
-// ✅ Display foods in real time
+// ✅ Listen for changes (real-time)
 db.collection("foods").onSnapshot(snapshot => {
   foodCardArray.innerHTML = "";
   snapshot.forEach(doc => {
@@ -50,13 +50,15 @@ db.collection("foods").onSnapshot(snapshot => {
     const card = document.createElement("div");
     card.classList.add("foodCards");
 
+    const avgRating = food.numRatings > 0 ? (food.rating / food.numRatings).toFixed(1) : "No ratings yet";
+
     card.innerHTML = `
       <h2>${food.name}</h2>
       ${food.imageUrl ? `<img src="${food.imageUrl}" alt="${food.name}">` : ""}
       <div class="stars" data-id="${doc.id}">
         ${[1,2,3,4,5].map(i => `<span data-value="${i}">★</span>`).join("")}
       </div>
-      <p>Average Rating: ${food.numRatings > 0 ? (food.rating / food.numRatings).toFixed(1) : "No ratings yet"}</p>
+      <p>Average Rating: ${avgRating}</p>
     `;
 
     foodCardArray.appendChild(card);
@@ -65,23 +67,42 @@ db.collection("foods").onSnapshot(snapshot => {
   attachStarListeners();
 });
 
-// ✅ Handle star ratings
+// ✅ Handle star ratings with hover and click
 function attachStarListeners() {
-  document.querySelectorAll(".stars span").forEach(star => {
-    star.addEventListener("click", async (e) => {
-      const value = parseInt(e.target.dataset.value);
-      const id = e.target.parentElement.dataset.id;
+  document.querySelectorAll(".stars").forEach(starDiv => {
+    const spans = Array.from(starDiv.querySelectorAll("span"));
+    const foodId = starDiv.dataset.id;
 
-      const docRef = db.collection("foods").doc(id);
-      const docSnap = await docRef.get();
-      const food = docSnap.data();
+    spans.forEach(star => {
+      // Hover effect
+      star.addEventListener("mouseenter", (e) => {
+        const value = parseInt(e.target.dataset.value);
+        spans.forEach((sp, i) => sp.classList.toggle("hovered", i < value));
+      });
 
-      const newTotal = food.rating + value;
-      const newCount = food.numRatings + 1;
+      starDiv.addEventListener("mouseleave", () => {
+        spans.forEach(sp => sp.classList.remove("hovered"));
+      });
 
-      await docRef.update({
-        rating: newTotal,
-        numRatings: newCount
+      // Click rating
+      star.addEventListener("click", async (e) => {
+        const value = parseInt(e.target.dataset.value);
+        const docRef = db.collection("foods").doc(foodId);
+        const docSnap = await docRef.get();
+
+        if (docSnap.exists) {
+          const food = docSnap.data();
+          const newTotal = (food.rating || 0) + value;
+          const newCount = (food.numRatings || 0) + 1;
+
+          await docRef.update({
+            rating: newTotal,
+            numRatings: newCount
+          });
+
+          // Update visuals immediately
+          spans.forEach((sp, i) => sp.classList.toggle("active", i < value));
+        }
       });
     });
   });
