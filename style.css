@@ -46,3 +46,8 @@ body {
 .stars span.active {
   color: gold;
 }
+.stars span:hover,
+.stars span:hover ~ span {
+  color: gold;
+}
+
