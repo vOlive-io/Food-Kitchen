@@ -33,12 +33,47 @@ body {
   margin-top: 10px;
 }
 
-.stars span {
-  font-size: 22px;
-  cursor: pointer;
-  color: lightgray;
+/* STAR RATING */
+.stars {
+  display: inline-block;
+  user-select: none; /* prevent text selection when clicking/dragging */
+  padding: 6px 0;
 }
 
+.stars span {
+  display: inline-block;
+  font-size: 26px;        /* size of stars */
+  line-height: 1;
+  margin: 0 4px;          /* spacing between stars */
+  cursor: pointer;
+  color: #d8d8d8;         /* default (inactive) color */
+  transition: color 0.12s ease, transform 0.08s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stars span:hover,
+.stars span.hovered,
+.stars span.hovered ~ span { /* ensure siblings to the right not highlighted */
+  color: gold;
+}
+
+/* highlight all stars up to and including hovered star */
+.stars span.hovered,
+.stars span.hovered ~ span {
+  color: gold;
+}
+
+/* "active" means permanently lit (based on rating) */
 .stars span.active {
   color: gold;
+}
+
+/* small pop when clicking */
+.stars span:active {
+  transform: scale(0.95);
+}
+
+/* responsive tweak: make stars slightly smaller on narrow screens */
+@media (max-width: 420px) {
+  .stars span { font-size: 22px; margin: 0 3px; }
 }
