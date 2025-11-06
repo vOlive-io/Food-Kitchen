@@ -5,28 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Food Kitchen</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Delius&family=Oregano:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <h1>🍳 Food Kitchen</h1>
 
   <div id="addFoodForm">
-    <input id="foodInput" placeholder="Food name..." />
-    <input type="file" id="foodImage" accept="image/*" />
+    <input id="foodInput" placeholder="Add food name..." />
+    <input id="foodImageUrl" placeholder="Paste image URL (optional)" />
     <button id="addFood">Add Food</button>
   </div>
 
   <div id="foodCardArray"></div>
 
-  <!-- Firebase (compat version for easy setup) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
-  <!-- Your script -->
+  <!-- Main script -->
   <script src="script.js"></script>
 </body>
 </html>
