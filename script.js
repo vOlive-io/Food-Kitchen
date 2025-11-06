@@ -9,27 +9,41 @@ const firebaseConfig = {
   measurementId: "G-29DDTPH087"
 };
 
-// ✅ Initialize Firebase + Firestore
+// ✅ Initialize Firebase + Firestore + Storage
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 // DOM elements
 const addFoodBtn = document.getElementById('addFood');
 const foodInput = document.getElementById('foodInput');
+const foodImageInput = document.getElementById('foodImage');
 const foodCardArray = document.getElementById('foodCardArray');
 
-// ✅ Add new food
+// ✅ Add new food with image
 addFoodBtn.addEventListener('click', async () => {
   const name = foodInput.value.trim();
+  const file = foodImageInput.files[0];
   if (!name) return;
+
+  let imageUrl = 'default.png'; // fallback image
+
+  // Upload image if selected
+  if (file) {
+    const storageRef = storage.ref(`foodImages/${Date.now()}_${file.name}`);
+    await storageRef.put(file);
+    imageUrl = await storageRef.getDownloadURL();
+  }
 
   await db.collection('foods').add({
     name,
+    imageUrl,
     rating: 0,
     ratingCount: 0
   });
 
   foodInput.value = '';
+  foodImageInput.value = '';
 });
 
 // ✅ Render foods & ratings live
@@ -49,6 +63,7 @@ db.collection('foods').orderBy('name').onSnapshot(snapshot => {
 
     div.innerHTML = `
       <h2>${food.name}</h2>
+      <img src="${food.imageUrl}" alt="${food.name}">
       <div class="stars" data-id="${doc.id}">
         ${starsHTML}
       </div>
