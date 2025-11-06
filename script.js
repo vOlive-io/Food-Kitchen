@@ -27,15 +27,19 @@ addFoodButton.addEventListener("click", async () => {
     return;
   }
 
-  await db.collection("foods").add({
-    name,
-    imageUrl,
-    rating: 0,
-    numRatings: 0
-  });
+  try {
+    await db.collection("foods").add({
+      name,
+      imageUrl,
+      rating: 0,
+      numRatings: 0
+    });
 
-  foodInput.value = "";
-  foodImageUrl.value = "";
+    foodInput.value = "";
+    foodImageUrl.value = "";
+  } catch (error) {
+    console.error("Error adding food:", error);
+  }
 });
 
 // ✅ Display foods in real time
