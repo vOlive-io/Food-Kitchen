@@ -2,32 +2,50 @@
 
 body { 
   font-family: 'Delius', 'Oregano', cursive;
+  background-color: #fffdf8;
   padding: 20px; 
-  max-width: 400px; 
+  max-width: 480px; 
   margin: auto; 
 }
+
+/* container for all food cards */
 #foodCardArray {
-  align-content: center;
-  grid-template-columns: 100fr 100fr;
   display: grid;
-  width: 100%;
-  margin-left: 2.5%;
+  grid-template-columns: 1fr 1fr; /* makes 2 columns */
+  gap: 15px; /* space between cards */
+  justify-content: center;
+  align-content: start;
 }
+
+/* each individual food card */
 .foodCards {
-  margin-top: -10px;
-  margin-bottom: 20px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 20px; 
+  background-color: #fff;
   border-radius: 18px;
-  border: black 2.5px solid;
-  width: 85%;
+  border: 2.5px solid black;
+  padding: 15px; 
+  text-align: center;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.1s ease-in-out;
 }
+
+.foodCards:hover {
+  transform: scale(1.03);
+}
+
+.foodCards img {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+/* rating stars */
 .stars span {
   font-size: 22px;
   cursor: pointer;
   color: lightgray;
+  transition: color 0.2s;
 }
+
 .stars span.active {
   color: gold;
 }
