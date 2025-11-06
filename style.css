@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Delius&family=Oregano:ital@0;1&display=swap');
+
+body { 
+  font-family: 'Delius', 'Oregano', cursive;
+  padding: 20px; 
+  max-width: 400px; 
+  margin: auto; 
+}
+#foodCardArray {
+  align-content: center;
+  grid-template-columns: 100fr 100fr;
+  display: grid;
+  width: 100%;
+  margin-left: 2.5%;
+}
+.foodCards {
+  margin-top: -10px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 20px; 
+  border-radius: 18px;
+  border: black 2.5px solid;
+  width: 85%;
+}
+.stars span {
+  font-size: 22px;
+  cursor: pointer;
+  color: lightgray;
+}
+.stars span.active {
+  color: gold;
+}
