@@ -1,4 +1,4 @@
-// ✅ Your Firebase config
+// ✅ Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyBNDByWKc8Asfd-S70OEIuVpxQ3xG-bgss",
   authDomain: "foodkitchen-37f44.firebaseapp.com",
@@ -9,34 +9,75 @@ const firebaseConfig = {
   measurementId: "G-29DDTPH087"
 };
 
-// Initialize Firebase
+// ✅ Initialize Firebase + Firestore
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// DOM elements
 const addFoodBtn = document.getElementById('addFood');
 const foodInput = document.getElementById('foodInput');
 const foodCardArray = document.getElementById('foodCardArray');
 
-// Add a food to Firestore
+// ✅ Add new food
 addFoodBtn.addEventListener('click', async () => {
   const name = foodInput.value.trim();
   if (!name) return;
-  await db.collection('foods').add({ name });
+
+  await db.collection('foods').add({
+    name,
+    rating: 0,
+    ratingCount: 0
+  });
+
   foodInput.value = '';
 });
 
-// Listen for real-time updates
+// ✅ Render all foods + ratings in real time
 db.collection('foods').orderBy('name').onSnapshot(snapshot => {
   foodCardArray.innerHTML = '';
   snapshot.forEach(doc => {
     const food = doc.data();
     const div = document.createElement('div');
     div.className = 'foodCards';
+
+    // Build stars (1–5)
+    let starsHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const active = i <= Math.round(food.rating) ? 'active' : '';
+      starsHTML += `<span class="star ${active}" data-value="${i}">★</span>`;
+    }
+
     div.innerHTML = `
       <h2>${food.name}</h2>
-      <img src="foodImage.png" alt="Food image">
-      <p></p>
+      <div class="stars" data-id="${doc.id}">
+        ${starsHTML}
+      </div>
+      <p>Average: ${food.rating.toFixed(1)} / 5 (${food.ratingCount} ratings)</p>
     `;
+
     foodCardArray.appendChild(div);
+  });
+
+  // Add star click events
+  document.querySelectorAll('.stars').forEach(starDiv => {
+    starDiv.querySelectorAll('.star').forEach(star => {
+      star.addEventListener('click', async () => {
+        const foodId = starDiv.dataset.id;
+        const ratingValue = parseInt(star.dataset.value);
+
+        // Get doc + update average rating
+        const foodRef = db.collection('foods').doc(foodId);
+        const foodSnap = await foodRef.get();
+        const foodData = foodSnap.data();
+
+        const newCount = (foodData.ratingCount || 0) + 1;
+        const newAverage = ((foodData.rating * (newCount - 1)) + ratingValue) / newCount;
+
+        await foodRef.update({
+          rating: newAverage,
+          ratingCount: newCount
+        });
+      });
+    });
   });
 });
