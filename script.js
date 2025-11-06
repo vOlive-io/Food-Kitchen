@@ -20,29 +20,37 @@ const foodInput = document.getElementById('foodInput');
 const foodImage = document.getElementById('foodImage');
 const foodCardArray = document.getElementById('foodCardArray');
 
-// ✅ Add Food with optional image
+// ✅ Add Food with optional image upload
 addFoodBtn.addEventListener('click', async () => {
   const name = foodInput.value.trim();
   const file = foodImage.files[0];
   if (!name) return alert('Please enter a food name.');
 
   let imageUrl = '';
-  if (file) {
-    const storageRef = storage.ref(`images/${Date.now()}_${file.name}`);
-    await storageRef.put(file);
-    imageUrl = await storageRef.getDownloadURL();
+
+  try {
+    if (file) {
+      const storageRef = storage.ref(`images/${Date.now()}_${file.name}`);
+      const snapshot = await storageRef.put(file); // ✅ Wait for upload to finish
+      imageUrl = await snapshot.ref.getDownloadURL(); // ✅ Get the image URL
+    }
+
+    await db.collection('foods').add({
+      name,
+      imageUrl,
+      rating: 0,
+      ratingCount: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Clear inputs
+    foodInput.value = '';
+    foodImage.value = '';
+    alert('✅ Food added successfully!');
+  } catch (error) {
+    console.error('Error adding food:', error);
+    alert('❌ Failed to add food. Check console for details.');
   }
-
-  await db.collection('foods').add({
-    name,
-    imageUrl,
-    rating: 0,
-    ratingCount: 0,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  foodInput.value = '';
-  foodImage.value = '';
 });
 
 // ✅ Real-time listener for all foods
@@ -62,7 +70,9 @@ db.collection('foods').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
       <h2>${food.name}</h2>
       <img src="${imageUrl}" alt="${food.name}">
       <div class="stars" data-id="${id}">
-        ${[1,2,3,4,5].map(i => `<span data-value="${i}" class="${i <= Math.round(rating) ? 'active' : ''}">★</span>`).join('')}
+        ${[1, 2, 3, 4, 5]
+          .map(i => `<span data-value="${i}" class="${i <= Math.round(rating) ? 'active' : ''}">★</span>`)
+          .join('')}
       </div>
       <p>Average: ${rating.toFixed(1)} / 5 (${ratingCount} ratings)</p>
     `;
@@ -72,20 +82,25 @@ db.collection('foods').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
   // ✅ Handle star clicks
   document.querySelectorAll('.stars').forEach(starDiv => {
     const foodId = starDiv.getAttribute('data-id');
-    starDiv.querySelectorAll('.star, span').forEach(star => {
+    starDiv.querySelectorAll('span').forEach(star => {
       star.addEventListener('click', async (e) => {
         const value = Number(e.target.getAttribute('data-value'));
         const ref = db.collection('foods').doc(foodId);
-        const docSnap = await ref.get();
-        if (docSnap.exists) {
-          const data = docSnap.data();
-          const newCount = (data.ratingCount || 0) + 1;
-          const newTotal = (data.rating || 0) * (data.ratingCount || 0) + value;
-          const newAvg = newTotal / newCount;
-          await ref.update({
-            rating: newAvg,
-            ratingCount: newCount
-          });
+
+        try {
+          const docSnap = await ref.get();
+          if (docSnap.exists) {
+            const data = docSnap.data();
+            const newCount = (data.ratingCount || 0) + 1;
+            const newTotal = (data.rating || 0) * (data.ratingCount || 0) + value;
+            const newAvg = newTotal / newCount;
+            await ref.update({
+              rating: newAvg,
+              ratingCount: newCount
+            });
+          }
+        } catch (error) {
+          console.error('Error updating rating:', error);
         }
       });
     });
