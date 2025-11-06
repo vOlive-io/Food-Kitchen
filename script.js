@@ -32,7 +32,7 @@ addFoodBtn.addEventListener('click', async () => {
   foodInput.value = '';
 });
 
-// ✅ Render all foods + ratings in real time
+// ✅ Render foods & ratings live
 db.collection('foods').orderBy('name').onSnapshot(snapshot => {
   foodCardArray.innerHTML = '';
   snapshot.forEach(doc => {
@@ -40,7 +40,7 @@ db.collection('foods').orderBy('name').onSnapshot(snapshot => {
     const div = document.createElement('div');
     div.className = 'foodCards';
 
-    // Build stars (1–5)
+    // Build stars
     let starsHTML = '';
     for (let i = 1; i <= 5; i++) {
       const active = i <= Math.round(food.rating) ? 'active' : '';
@@ -58,14 +58,13 @@ db.collection('foods').orderBy('name').onSnapshot(snapshot => {
     foodCardArray.appendChild(div);
   });
 
-  // Add star click events
+  // Star click events
   document.querySelectorAll('.stars').forEach(starDiv => {
     starDiv.querySelectorAll('.star').forEach(star => {
       star.addEventListener('click', async () => {
         const foodId = starDiv.dataset.id;
         const ratingValue = parseInt(star.dataset.value);
 
-        // Get doc + update average rating
         const foodRef = db.collection('foods').doc(foodId);
         const foodSnap = await foodRef.get();
         const foodData = foodSnap.data();
