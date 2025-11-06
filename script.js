@@ -58,7 +58,7 @@ db.collection("foods").onSnapshot(snapshot => {
       <div class="stars" data-id="${doc.id}">
         ${[1,2,3,4,5].map(i => `<span data-value="${i}">★</span>`).join("")}
       </div>
-      <p>Average Rating: ${avgRating}</p>
+      <p>Average Rating: ${avgRating} (${food.numRatings} ratings)</p>
     `;
 
     foodCardArray.appendChild(card);
