@@ -5,25 +5,49 @@ body {
   padding: 20px; 
   max-width: 400px; 
   margin: auto; 
+  text-align: center;
+}
+
+#addFoodForm {
+  margin-bottom: 25px;
+}
+
+input {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  width: 85%;
+}
+
+button {
+  background-color: #ffb347;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #ffa726;
 }
 
 #foodCardArray {
   align-content: center;
-  grid-template-columns: 100fr 100fr;
+  grid-template-columns: 1fr;
   display: grid;
   width: 100%;
-  margin-left: 2.5%;
+  gap: 15px;
 }
 
 .foodCards {
-  margin-top: -10px;
-  margin-bottom: 20px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 20px; 
+  background: #fff8f0;
+  margin-bottom: 10px;
+  padding: 15px;
   border-radius: 18px;
   border: black 2.5px solid;
-  width: 85%;
+  width: 100%;
   text-align: center;
 }
 
@@ -33,47 +57,33 @@ body {
   margin-top: 10px;
 }
 
-/* STAR RATING */
+/* ⭐ STAR RATING SYSTEM */
 .stars {
   display: inline-block;
-  user-select: none; /* prevent text selection when clicking/dragging */
+  user-select: none;
   padding: 6px 0;
 }
 
 .stars span {
   display: inline-block;
-  font-size: 26px;        /* size of stars */
+  font-size: 26px;
   line-height: 1;
-  margin: 0 4px;          /* spacing between stars */
+  margin: 0 4px;
   cursor: pointer;
-  color: #d8d8d8;         /* default (inactive) color */
+  color: #d8d8d8;
   transition: color 0.12s ease, transform 0.08s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-.stars span:hover,
 .stars span.hovered,
-.stars span.hovered ~ span { /* ensure siblings to the right not highlighted */
-  color: gold;
-}
-
-/* highlight all stars up to and including hovered star */
-.stars span.hovered,
-.stars span.hovered ~ span {
-  color: gold;
-}
-
-/* "active" means permanently lit (based on rating) */
 .stars span.active {
   color: gold;
 }
 
-/* small pop when clicking */
 .stars span:active {
   transform: scale(0.95);
 }
 
-/* responsive tweak: make stars slightly smaller on narrow screens */
 @media (max-width: 420px) {
   .stars span { font-size: 22px; margin: 0 3px; }
 }
