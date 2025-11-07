@@ -6,7 +6,7 @@
   <title>Food Kitchen</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Firebase (v8 style, works with this script) -->
+  <!-- Firebase (v8 style) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
@@ -20,7 +20,7 @@
     <button id="requestsTab">Requests</button>
   </nav>
 
-  <!-- Add Food -->
+  <!-- Foods Section -->
   <section id="foodsSection" class="active-section">
     <div class="form">
       <input id="foodName" type="text" placeholder="Food name" />
@@ -38,8 +38,8 @@
     <div id="foodCardArray"></div>
   </section>
 
-  <!-- Food Requests -->
-  <section id="requestsSection">
+  <!-- Requests Section -->
+  <section id="requestsSection" class="hidden">
     <div class="form">
       <input id="requestInput" type="text" placeholder="Request a new food..." />
       <button id="addRequest">Add Request</button>
@@ -47,7 +47,6 @@
     <ul id="requestsList"></ul>
   </section>
 
-  <!-- Firebase Init -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBNDByWKc8Asfd-S70OEIuVpxQ3xG-bgss",
@@ -60,7 +59,6 @@
     };
     firebase.initializeApp(firebaseConfig);
   </script>
-
   <script src="script.js"></script>
 </body>
 </html>
