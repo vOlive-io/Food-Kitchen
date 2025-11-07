@@ -11,158 +11,161 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// DOM elements
+// DOM Elements
+const foodCardArray = document.getElementById("foodCardArray");
 const addFoodBtn = document.getElementById("addFood");
 const foodNameInput = document.getElementById("foodName");
-const foodImageInput = document.getElementById("foodImageUrl");
-const flavorSelect = document.getElementById("foodFlavor");
-const foodCardArray = document.getElementById("foodCardArray");
-
-const foodsTab = document.getElementById("foodsTab");
-const requestsTab = document.getElementById("requestsTab");
-const foodsSection = document.getElementById("foodsSection");
-const requestsSection = document.getElementById("requestsSection");
-
-const requestInput = document.getElementById("requestText");
+const foodImageInput = document.getElementById("foodImage");
+const foodFlavorInput = document.getElementById("foodFlavor");
 const addRequestBtn = document.getElementById("addRequest");
+const requestInput = document.getElementById("requestInput");
 const requestsList = document.getElementById("requestsList");
 
 // Tabs
-foodsTab.onclick = () => {
-  foodsTab.classList.add("active");
-  requestsTab.classList.remove("active");
-  foodsSection.classList.add("active-section");
-  requestsSection.classList.remove("active-section");
-};
-requestsTab.onclick = () => {
-  requestsTab.classList.add("active");
-  foodsTab.classList.remove("active");
-  requestsSection.classList.add("active-section");
-  foodsSection.classList.remove("active-section");
-};
+document.getElementById("foodsTab").onclick = () => switchTab("foods");
+document.getElementById("requestsTab").onclick = () => switchTab("requests");
 
-// Add food
-addFoodBtn.onclick = async () => {
+function switchTab(tab) {
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll("section").forEach(s => s.classList.remove("active-section"));
+  document.getElementById(tab + "Tab").classList.add("active");
+  document.getElementById(tab + "Section").classList.add("active-section");
+}
+
+// Add Food
+addFoodBtn.addEventListener("click", async () => {
   const name = foodNameInput.value.trim();
-  const imageUrl = foodImageInput.value.trim();
-  const flavor = flavorSelect.value;
+  const image = foodImageInput.value.trim();
+  const flavor = foodFlavorInput.value;
 
   if (!name) return alert("Please enter a food name!");
+
   await db.collection("foods").add({
     name,
-    imageUrl,
-    flavorType: flavor,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    image,
+    flavor,
+    createdAt: new Date()
   });
 
   foodNameInput.value = "";
   foodImageInput.value = "";
-};
+  foodFlavorInput.value = "spicy";
+});
 
-// Load foods
+// Add Request
+addRequestBtn.addEventListener("click", async () => {
+  const text = requestInput.value.trim();
+  if (!text) return alert("Please type a request!");
+
+  await db.collection("requests").add({
+    text,
+    createdAt: new Date()
+  });
+  requestInput.value = "";
+});
+
+// Load Foods
 db.collection("foods").orderBy("createdAt", "desc").onSnapshot(snapshot => {
   foodCardArray.innerHTML = "";
   snapshot.forEach(doc => {
-    const data = doc.data();
-    const id = doc.id;
-
+    const food = doc.data();
+    const card = document.createElement("div");
+    card.className = `food-card ${food.flavor}`;
     const flavorIcons = {
-      Spicy: "🌶️",
-      Savory: "🍗",
-      Sweet: "🍰",
-      Cool: "🧊"
-    };
-    const flavorClasses = {
-      Spicy: "spicy",
-      Savory: "savory",
-      Sweet: "sweet",
-      Cool: "cool"
+      spicy: "🌶️",
+      savory: "🍗",
+      sweet: "🍰",
+      cool: "🧊"
     };
 
-    const foodCard = document.createElement("div");
-    foodCard.className = `food-card ${flavorClasses[data.flavorType]}`;
-    foodCard.innerHTML = `
-      <div class="flavor-icon">${flavorIcons[data.flavorType]}</div>
-      <h2>${data.name}</h2>
-      ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.name}">` : ""}
-      <div class="comment-section" id="comments-${id}"></div>
-      <div class="add-comment">
-        <select id="emoji-${id}">
-          <option value="💬">💬</option>
-          <option value="🌶️">🌶️</option>
-          <option value="🧊">🧊</option>
-          <option value="😋">😋</option>
-          <option value="🌟">🌟</option>
-          <option value="❤️‍🔥">❤️‍🔥</option>
-          <option value="👍">👍</option>
-          <option value="🥵">🥵</option>
-          <option value="🥶">🥶</option>
-          <option value="😀">😀</option>
-        </select>
-        <input id="name-${id}" placeholder="Your name...">
-        <input id="comment-${id}" placeholder="Your comment...">
-        <button onclick="addComment('${id}')">Post 💬</button>
+    card.innerHTML = `
+      <div class="flavor-icon">${flavorIcons[food.flavor] || "🍴"}</div>
+      <h3>${food.name}</h3>
+      <img src="${food.image || "https://via.placeholder.com/250"}" alt="${food.name}">
+      <div class="comment-section" id="comments-${doc.id}">
+        <h4>Comments</h4>
+        <div class="comments"></div>
+        <div class="add-comment">
+          <select class="comment-name">
+            <option value="Lars the Chef">Lars the Chef</option>
+            <option value="Laurel">Laurel</option>
+            <option value="Olive">Olive</option>
+            <option value="German">German</option>
+            <option value="Olivia">Olivia</option>
+          </select>
+          <select class="comment-emoji">
+            <option value="💬">💬 (default)</option>
+            <option value="🌶️">🌶️</option>
+            <option value="🧊">🧊</option>
+            <option value="😋">😋</option>
+            <option value="🌟">🌟</option>
+            <option value="❤️‍🔥">❤️‍🔥</option>
+            <option value="👍">👍</option>
+            <option value="🥵">🥵</option>
+            <option value="🥶">🥶</option>
+            <option value="😀">😀</option>
+          </select>
+          <input class="comment-input" placeholder="Add a comment..." />
+          <button class="add-comment-btn">Post</button>
+        </div>
       </div>
     `;
-    foodCardArray.appendChild(foodCard);
 
-    loadComments(id);
+    const commentsDiv = card.querySelector(".comments");
+    const commentBtn = card.querySelector(".add-comment-btn");
+    const nameSelect = card.querySelector(".comment-name");
+    const emojiSelect = card.querySelector(".comment-emoji");
+    const commentInput = card.querySelector(".comment-input");
+
+    // Load Comments
+    db.collection("foods").doc(doc.id).collection("comments")
+      .orderBy("createdAt", "asc")
+      .onSnapshot(snap => {
+        commentsDiv.innerHTML = "";
+        snap.forEach(c => {
+          const data = c.data();
+          const div = document.createElement("div");
+          div.classList.add("comment");
+          div.innerHTML = `${data.emoji} <b>${data.name}</b>: ${data.text}`;
+          commentsDiv.appendChild(div);
+        });
+      });
+
+    // Add Comment
+    commentBtn.addEventListener("click", async () => {
+      const name = nameSelect.value;
+      const text = commentInput.value.trim();
+      const emoji = emojiSelect.value || "💬";
+      if (!text) return;
+
+      const displayName = name === "Lars the Chef" ? "👨‍🍳 Lars the Chef" : name;
+
+      await db.collection("foods").doc(doc.id).collection("comments").add({
+        name: displayName,
+        text,
+        emoji,
+        createdAt: new Date()
+      });
+
+      commentInput.value = "";
+    });
+
+    foodCardArray.appendChild(card);
   });
 });
 
-// Add comment
-async function addComment(foodId) {
-  const emoji = document.getElementById(`emoji-${foodId}`).value || "💬";
-  const name = document.getElementById(`name-${foodId}`).value.trim() || "Anonymous";
-  const comment = document.getElementById(`comment-${foodId}`).value.trim();
-
-  if (!comment) return alert("Please enter a comment!");
-
-  await db.collection("foods").doc(foodId).collection("comments").add({
-    emoji,
-    name,
-    comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  document.getElementById(`comment-${foodId}`).value = "";
-}
-
-// Load comments
-function loadComments(foodId) {
-  const commentsDiv = document.getElementById(`comments-${foodId}`);
-  db.collection("foods").doc(foodId).collection("comments").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-    commentsDiv.innerHTML = "";
-    snapshot.forEach(doc => {
-      const c = doc.data();
-      commentsDiv.innerHTML += `<div class="comment">${c.emoji} <b>${c.name}</b>: ${c.comment}</div>`;
-    });
-  });
-}
-
-// Add request
-addRequestBtn.onclick = async () => {
-  const text = requestInput.value.trim();
-  if (!text) return alert("Please enter your request!");
-  await db.collection("requests").add({
-    requestText: text,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  requestInput.value = "";
-};
-
-// Load requests
+// Load Requests
 db.collection("requests").orderBy("createdAt", "desc").onSnapshot(snapshot => {
   requestsList.innerHTML = "";
   snapshot.forEach(doc => {
-    const data = doc.data();
+    const req = doc.data();
     const li = document.createElement("li");
-    li.innerHTML = `${data.requestText} <button class="delete-btn" onclick="deleteRequest('${doc.id}')">🗑️</button>`;
+    li.textContent = req.text;
+    const del = document.createElement("button");
+    del.textContent = "×";
+    del.className = "delete-btn";
+    del.onclick = () => db.collection("requests").doc(doc.id).delete();
+    li.appendChild(del);
     requestsList.appendChild(li);
   });
 });
-
-// Delete request
-async function deleteRequest(id) {
-  await db.collection("requests").doc(id).delete();
-}
