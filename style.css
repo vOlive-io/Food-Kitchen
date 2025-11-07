@@ -128,6 +128,10 @@ main.tab-content {
 .greens {
   background: linear-gradient(135deg, #b8f5b1, #8ee68a);
 }
+.warm {
+  background: linear-gradient(135deg, #ffd8b1, #ffb77a);
+}
+
 
 /* 🖼️ Images */
 .foodCard img {
