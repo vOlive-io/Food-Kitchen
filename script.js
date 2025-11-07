@@ -80,6 +80,7 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
           <option value="Olive">Olive</option>
           <option value="German">German</option>
           <option value="Olivia">Olivia</option>
+          <option value="Olivia">Lulu</option>
           <option value="custom">Custom</option>
         </select>
         <input type="text" class="customName" placeholder="Enter custom name..." style="display:none;">
@@ -87,7 +88,6 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
           <option value="💬">💬</option>
           <option value="🌶️">🌶️</option>
           <option value="🧊">🧊</option>
-          <option value="🍜">🍜</option>
           <option value="😋">😋</option>
           <option value="🌟">🌟</option>
           <option value="❤️‍🔥">❤️‍🔥</option>
