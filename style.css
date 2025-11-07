@@ -8,42 +8,71 @@ body {
   background: #fffaf5;
 }
 
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* 🧭 Tabs */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.tabs button {
+  border: none;
+  background: #eee;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+.tabs button.active {
+  background: #333;
+  color: white;
+}
+
+/* 🍱 Food Grid */
 #foodCardArray {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
   margin-top: 20px;
 }
 
+/* 🍽️ Food Card */
 .foodCard {
   border-radius: 18px;
-  border: 2.5px solid black;
+  border: 2px solid black;
   padding: 15px;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   color: #000;
+  overflow: hidden;
+  text-align: center;
+  transition: all 0.25s;
+  box-shadow: 3px 3px 12px rgba(0,0,0,0.1);
 }
-
 .foodCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 3px 3px 12px rgba(0,0,0,0.2);
+  transform: translateY(-5px);
+  box-shadow: 4px 4px 15px rgba(0,0,0,0.2);
 }
-
 .foodCard img {
   width: 100%;
-  border-radius: 10px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
   margin-bottom: 10px;
 }
 
-/* 🍽️ Category Gradients */
-.spicy { background: linear-gradient(135deg, #ff6a00, #ff1e1e); }
-.savory { background: linear-gradient(135deg, #fff75a, #ffcc00); }
-.sweet { background: linear-gradient(135deg, #ffb6f0, #ff7cc9); }
-.cool { background: linear-gradient(135deg, #70eaff, #007bff); }
-.greens { background: linear-gradient(135deg, #b4ff8b, #2ecc71); }
+/* 🍛 Category Gradients */
+.spicy { background: linear-gradient(135deg, #ff4d00, #ff1e1e); }
+.savory { background: linear-gradient(135deg, #ffe066, #ffcc00); }
+.sweet { background: linear-gradient(135deg, #ffb8e2, #ff70b9); }
+.cool { background: linear-gradient(135deg, #9ee7ff, #006eff); color: white; }
+.greens { background: linear-gradient(135deg, #b6ff7a, #00c45a); color: black; }
 
-/* ⭐ Stars */
-.stars { margin-top: 5px; }
+/* ⭐ Ratings */
 .stars span {
   font-size: 22px;
   cursor: pointer;
@@ -51,39 +80,37 @@ body {
   transition: color 0.2s;
 }
 .stars span.active { color: gold; }
-
 .rating-display {
-  font-size: 14px;
-  margin: 5px 0;
   font-weight: bold;
+  margin: 5px 0;
 }
 
 /* 💬 Comments */
 .comments {
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 10px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 8px;
   padding: 8px;
-  margin-top: 8px;
   max-height: 120px;
   overflow-y: auto;
+  text-align: left;
 }
 .comment {
-  margin: 3px 0;
+  margin: 4px 0;
   font-size: 14px;
 }
 
-/* 🗨️ Comment Input */
+/* ✏️ Comment input */
 .comment-input {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   margin-top: 10px;
 }
 .comment-input select,
 .comment-input input {
   border-radius: 6px;
   border: 1.5px solid #333;
-  padding: 5px;
+  padding: 6px;
 }
 .comment-input button {
   background: black;
@@ -95,27 +122,9 @@ body {
 }
 .comment-input button:hover { background: #333; }
 
-/* 🍕 Tabs */
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-.tabs button {
-  border: none;
-  background: #f0f0f0;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.tabs button.active {
-  background: #333;
-  color: white;
-}
+/* 🧾 Sections */
 .active-section { display: block; }
 section:not(.active-section) { display: none; }
 
-/* 🎨 Custom Name Input */
 .customName { display: none; }
 .showCustom .customName { display: block; }
