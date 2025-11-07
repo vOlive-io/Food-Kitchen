@@ -67,7 +67,6 @@ db.collection("foods").onSnapshot((snapshot) => {
     const card = document.createElement("div");
     card.classList.add("foodCard", food.category);
 
-    // prevent crash on missing data
     const ratingValue = Number(food.rating) || 0;
     const ratingCount = Number(food.ratingCount) || 0;
 
@@ -118,14 +117,11 @@ db.collection("foods").onSnapshot((snapshot) => {
         commenterSelect.value === "custom"
           ? customNameInput.value.trim()
           : commenterSelect.value;
-      const emojiList = ["🌶️", "🧊", "😋", "🌟", "❤️‍🔥", "👍", "💬", "🥵", "🥶", "😀"];
       const emoji = "💬"; // default
-
       if (!commentText) {
         alert("Please enter a comment.");
         return;
       }
-
       const comment = `${emoji} <b>${commenter || "Anonymous"}</b>: ${commentText}`;
       const docRef = db.collection("foods").doc(food.id);
       await docRef.update({
