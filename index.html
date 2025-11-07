@@ -3,42 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Food Kitchen 🍽️</title>
+  <title>Food Kitchen</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Firebase v8 -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <!-- Firebase v8 (compatible with this JS style) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
+
 <body>
   <header>
-    <h1>🍴 Food Kitchen</h1>
-    <p>Explore, rate, and comment on delicious foods!</p>
+    <h1>🍽️ Food Kitchen</h1>
   </header>
 
-  <section id="addFoodSection">
-    <h2>Add New Food</h2>
-    <form id="addFoodForm">
-      <input type="text" id="foodName" placeholder="Food name..." required />
-      <select id="foodCategory" required>
-        <option value="">Select category</option>
-        <option value="Spicy">Spicy 🌶️</option>
-        <option value="Savory">Savory 🍗</option>
-        <option value="Sweet">Sweet 🍰</option>
-        <option value="Cool">Cool 🧊</option>
-        <option value="Greens">Greens 🥬</option>
+  <nav>
+    <button id="foodsTab" class="active">Foods</button>
+    <button id="requestsTab">Requests</button>
+  </nav>
+
+  <!-- 🍱 Add Food -->
+  <section id="foodsSection" class="active-section">
+    <div class="form">
+      <input id="foodName" type="text" placeholder="Food name" />
+      <input id="foodImage" type="text" placeholder="Image link (URL)" />
+
+      <select id="foodFlavor">
+        <option value="">Select flavor</option>
+        <option value="spicy">Spicy 🌶️</option>
+        <option value="savory">Savory 🍗</option>
+        <option value="sweet">Sweet 🍰</option>
+        <option value="cool">Cool 🧊</option>
+        <option value="greens">Greens 🥬</option>
       </select>
-      <input type="file" id="foodImage" accept="image/*" />
-      <button type="submit">Add Food</button>
-    </form>
+
+      <button id="addFood">Add Food</button>
+    </div>
+
+    <div id="foodCardArray"></div>
   </section>
 
-  <main>
-    <h2>🍲 Food Gallery</h2>
-    <div id="foodCardArray"></div>
-  </main>
+  <!-- 🍕 Requests -->
+  <section id="requestsSection">
+    <div class="form">
+      <input id="requestInput" type="text" placeholder="Request a new food..." />
+      <button id="addRequest">Add Request</button>
+    </div>
+    <ul id="requestsList"></ul>
+  </section>
 
+  <!-- Firebase Config + Script -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNDByWKc8Asfd-S70OEIuVpxQ3xG-bgss",
+      authDomain: "foodkitchen-37f44.firebaseapp.com",
+      projectId: "foodkitchen-37f44",
+      storageBucket: "foodkitchen-37f44.firebasestorage.app",
+      messagingSenderId: "803378208472",
+      appId: "1:803378208472:web:bb30cf298391ba16d901ad",
+      measurementId: "G-29DDTPH087"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 
   <script src="script.js"></script>
 </body>
