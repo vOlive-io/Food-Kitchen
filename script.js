@@ -1,17 +1,13 @@
-// ✅ Firebase already initialized in HTML
 const db = firebase.firestore();
 
-const foodCardArray = document.getElementById("foodCardArray");
-const addFoodBtn = document.getElementById("addFood");
+// Tabs
 const foodsTab = document.getElementById("foodsTab");
 const requestsTab = document.getElementById("requestsTab");
 const foodsSection = document.getElementById("foodsSection");
 const requestsSection = document.getElementById("requestsSection");
-const addRequestBtn = document.getElementById("addRequest");
-const requestsList = document.getElementById("requestsList");
 
-// 🌶️ Add new food
-addFoodBtn.addEventListener("click", async () => {
+// 🧑‍🍳 Add Food
+document.getElementById("addFood").addEventListener("click", async () => {
   const name = document.getElementById("foodName").value.trim();
   const image = document.getElementById("foodImage").value.trim();
   const flavor = document.getElementById("foodFlavor").value;
@@ -33,24 +29,22 @@ addFoodBtn.addEventListener("click", async () => {
   document.getElementById("foodFlavor").value = "";
 });
 
-// 🍗 Render foods
+// 🥗 Display Foods
+const foodCardArray = document.getElementById("foodCardArray");
 db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
   foodCardArray.innerHTML = "";
   snapshot.forEach(doc => {
     const food = doc.data();
     const id = doc.id;
 
-    const card = document.createElement("div");
-    card.classList.add("foodCard", food.flavor);
-
+    const avgRating = food.totalRatings > 0 ? food.stars.toFixed(1) : "0.0";
     const emoji = food.flavor === "spicy" ? "🌶️" :
                    food.flavor === "savory" ? "🍗" :
                    food.flavor === "sweet" ? "🍰" :
-                   food.flavor === "cool" ? "🧊" :
-                   "🥬";
+                   food.flavor === "cool" ? "🧊" : "🥬";
 
-    const avgRating = food.totalRatings > 0 ? (food.stars).toFixed(1) : "0.0";
-
+    const card = document.createElement("div");
+    card.classList.add("foodCard", food.flavor);
     card.innerHTML = `
       <h2>${food.name} ${emoji}</h2>
       ${food.image ? `<img src="${food.image}" alt="${food.name}">` : ""}
@@ -87,54 +81,46 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
       </div>
     `;
 
-    // ⭐ Highlight stars
+    // ⭐ Handle rating
     const stars = card.querySelectorAll(".stars span");
     stars.forEach(star => {
-      const starValue = parseInt(star.dataset.star);
-      if (food.stars >= starValue - 0.5) star.classList.add("active");
       star.addEventListener("click", async () => {
         const rating = parseInt(star.dataset.star);
         const total = (food.totalRatings || 0) + 1;
         const avg = ((food.stars || 0) * (food.totalRatings || 0) + rating) / total;
-        await db.collection("foods").doc(id).update({
-          stars: avg,
-          totalRatings: total
-        });
+        await db.collection("foods").doc(id).update({ stars: avg, totalRatings: total });
       });
     });
 
-    // 💬 Add comment
-    const commentBtn = card.querySelector(".comment-input button");
-    const commentInput = card.querySelector(".commentText");
-    const commenterSelect = card.querySelector(".comment-input .commenter");
+    // 💬 Handle comments
+    const commenterSelect = card.querySelector(".commenter");
     const customNameInput = card.querySelector(".customName");
-    const emojiSelect = card.querySelector(".comment-input .emoji");
-
     commenterSelect.addEventListener("change", () => {
       customNameInput.style.display = commenterSelect.value === "custom" ? "block" : "none";
     });
 
+    const commentBtn = card.querySelector(".comment-input button");
     commentBtn.addEventListener("click", async () => {
-      const text = commentInput.value.trim();
-      let name = commenterSelect.value === "custom" 
-        ? customNameInput.value.trim() 
+      const text = card.querySelector(".commentText").value.trim();
+      const name = commenterSelect.value === "custom"
+        ? customNameInput.value.trim()
         : commenterSelect.value || "Guest";
-      const emoji = emojiSelect.value || "💬";
+      const emoji = card.querySelector(".emoji").value || "💬";
       if (!text) return;
 
       const comments = food.comments || [];
       comments.push({ name, text, emoji });
       await db.collection("foods").doc(id).update({ comments });
-
-      commentInput.value = "";
-      customNameInput.value = "";
     });
 
     foodCardArray.appendChild(card);
   });
 });
 
-// 🍕 Add request
+// 🧾 Requests
+const addRequestBtn = document.getElementById("addRequest");
+const requestsList = document.getElementById("requestsList");
+
 addRequestBtn.addEventListener("click", async () => {
   const text = document.getElementById("requestInput").value.trim();
   if (!text) return;
@@ -145,7 +131,6 @@ addRequestBtn.addEventListener("click", async () => {
   document.getElementById("requestInput").value = "";
 });
 
-// 🧾 Display requests
 db.collection("requests").orderBy("created", "desc").onSnapshot(snapshot => {
   requestsList.innerHTML = "";
   snapshot.forEach(doc => {
@@ -160,7 +145,7 @@ db.collection("requests").orderBy("created", "desc").onSnapshot(snapshot => {
   });
 });
 
-// ✨ Tab switching
+// 🧭 Tabs
 foodsTab.addEventListener("click", () => {
   foodsSection.classList.add("active-section");
   requestsSection.classList.remove("active-section");
