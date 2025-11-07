@@ -35,6 +35,17 @@ nav button.active {
   color: white;
 }
 
+/* Sections */
+section {
+  display: none;
+}
+.active-section {
+  display: block;
+}
+.hidden {
+  display: none;
+}
+
 .form {
   display: flex;
   flex-wrap: wrap;
@@ -62,6 +73,7 @@ button:hover {
   background: #ffb347;
 }
 
+/* Foods Grid */
 #foodCardArray {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -70,7 +82,7 @@ button:hover {
 }
 
 .foodCard {
-  width: 85%;
+  width: 100%;
   border-radius: 15px;
   padding: 15px;
   color: #222;
