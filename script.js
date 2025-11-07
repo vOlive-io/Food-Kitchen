@@ -53,11 +53,15 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
     const id = doc.id;
     const avgRating = food.totalRatings > 0 ? food.stars.toFixed(1) : "0.0";
 
+    // 🌶️ Flavor emoji mapping
     const emoji = food.flavor === "spicy" ? "🌶️" :
                    food.flavor === "savory" ? "🍗" :
                    food.flavor === "sweet" ? "🍰" :
-                   food.flavor === "cool" ? "🧊" : "🥬";
+                   food.flavor === "cool" ? "🧊" :
+                   food.flavor === "greens" ? "🥬" :
+                   food.flavor === "warm" ? "🍜" : "🍽️";
 
+    // 🍱 Create card
     const card = document.createElement("div");
     card.classList.add("foodCard", food.flavor);
     card.innerHTML = `
@@ -83,6 +87,7 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
           <option value="💬">💬</option>
           <option value="🌶️">🌶️</option>
           <option value="🧊">🧊</option>
+          <option value="🍜">🍜</option>
           <option value="😋">😋</option>
           <option value="🌟">🌟</option>
           <option value="❤️‍🔥">❤️‍🔥</option>
@@ -96,7 +101,7 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
       </div>
     `;
 
-    // Handle stars
+    // ⭐ Handle star ratings
     const stars = card.querySelectorAll(".stars span");
     stars.forEach(star => {
       star.addEventListener("click", async () => {
@@ -107,14 +112,14 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
       });
     });
 
-    // Handle custom name
+    // 👤 Handle custom name visibility
     const commenterSelect = card.querySelector(".commenter");
     const customNameInput = card.querySelector(".customName");
     commenterSelect.addEventListener("change", () => {
       customNameInput.style.display = commenterSelect.value === "custom" ? "block" : "none";
     });
 
-    // Handle comments
+    // 💬 Handle adding comments
     const commentBtn = card.querySelector(".comment-input button");
     commentBtn.addEventListener("click", async () => {
       const text = card.querySelector(".commentText").value.trim();
@@ -133,7 +138,7 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
   });
 });
 
-// Requests
+// 🧾 Requests tab
 const addRequestBtn = document.getElementById("addRequest");
 const requestsList = document.getElementById("requestsList");
 
@@ -147,6 +152,7 @@ addRequestBtn.addEventListener("click", async () => {
   document.getElementById("requestInput").value = "";
 });
 
+// Display requests
 db.collection("requests").orderBy("created", "desc").onSnapshot(snapshot => {
   requestsList.innerHTML = "";
   if (snapshot.empty) {
