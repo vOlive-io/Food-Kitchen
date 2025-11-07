@@ -1,6 +1,6 @@
-// ✅ Initialize Firebase
+// 🔥 Initialize Firebase
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
+  apiKey: "AIzaSyBNDByWKc8Asfd-S70OEIuVpxQ3xG-bgss",
   authDomain: "foodkitchen-37f44.firebaseapp.com",
   projectId: "foodkitchen-37f44",
   storageBucket: "foodkitchen-37f44.firebasestorage.app",
@@ -8,102 +8,161 @@ const firebaseConfig = {
   appId: "1:803378208472:web:bb30cf298391ba16d901ad",
   measurementId: "G-29DDTPH087"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const foodInput = document.getElementById("foodInput");
-const foodImageUrl = document.getElementById("foodImageUrl");
-const addFoodButton = document.getElementById("addFood");
+// DOM elements
+const addFoodBtn = document.getElementById("addFood");
+const foodNameInput = document.getElementById("foodName");
+const foodImageInput = document.getElementById("foodImageUrl");
+const flavorSelect = document.getElementById("foodFlavor");
 const foodCardArray = document.getElementById("foodCardArray");
 
-// ✅ Add food to Firestore
-addFoodButton.addEventListener("click", async () => {
-  const name = foodInput.value.trim();
-  const imageUrl = foodImageUrl.value.trim() || "";
+const foodsTab = document.getElementById("foodsTab");
+const requestsTab = document.getElementById("requestsTab");
+const foodsSection = document.getElementById("foodsSection");
+const requestsSection = document.getElementById("requestsSection");
 
-  if (!name) {
-    alert("Please enter a food name!");
-    return;
-  }
+const requestInput = document.getElementById("requestText");
+const addRequestBtn = document.getElementById("addRequest");
+const requestsList = document.getElementById("requestsList");
 
-  try {
-    await db.collection("foods").add({
-      name,
-      imageUrl,
-      rating: 0,
-      numRatings: 0
-    });
+// Tabs
+foodsTab.onclick = () => {
+  foodsTab.classList.add("active");
+  requestsTab.classList.remove("active");
+  foodsSection.classList.add("active-section");
+  requestsSection.classList.remove("active-section");
+};
+requestsTab.onclick = () => {
+  requestsTab.classList.add("active");
+  foodsTab.classList.remove("active");
+  requestsSection.classList.add("active-section");
+  foodsSection.classList.remove("active-section");
+};
 
-    foodInput.value = "";
-    foodImageUrl.value = "";
-  } catch (error) {
-    console.error("Error adding food:", error);
-  }
-});
+// Add food
+addFoodBtn.onclick = async () => {
+  const name = foodNameInput.value.trim();
+  const imageUrl = foodImageInput.value.trim();
+  const flavor = flavorSelect.value;
 
-// ✅ Listen for changes (real-time)
-db.collection("foods").onSnapshot(snapshot => {
+  if (!name) return alert("Please enter a food name!");
+  await db.collection("foods").add({
+    name,
+    imageUrl,
+    flavorType: flavor,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  foodNameInput.value = "";
+  foodImageInput.value = "";
+};
+
+// Load foods
+db.collection("foods").orderBy("createdAt", "desc").onSnapshot(snapshot => {
   foodCardArray.innerHTML = "";
   snapshot.forEach(doc => {
-    const food = doc.data();
-    const card = document.createElement("div");
-    card.classList.add("foodCards");
+    const data = doc.data();
+    const id = doc.id;
 
-    const avgRating = food.numRatings > 0 ? (food.rating / food.numRatings).toFixed(1) : "No ratings yet";
+    const flavorIcons = {
+      Spicy: "🌶️",
+      Savory: "🍗",
+      Sweet: "🍰",
+      Cool: "🧊"
+    };
+    const flavorClasses = {
+      Spicy: "spicy",
+      Savory: "savory",
+      Sweet: "sweet",
+      Cool: "cool"
+    };
 
-    card.innerHTML = `
-      <h2>${food.name}</h2>
-      ${food.imageUrl ? `<img src="${food.imageUrl}" alt="${food.name}">` : ""}
-      <div class="stars" data-id="${doc.id}">
-        ${[1,2,3,4,5].map(i => `<span data-value="${i}">★</span>`).join("")}
+    const foodCard = document.createElement("div");
+    foodCard.className = `food-card ${flavorClasses[data.flavorType]}`;
+    foodCard.innerHTML = `
+      <div class="flavor-icon">${flavorIcons[data.flavorType]}</div>
+      <h2>${data.name}</h2>
+      ${data.imageUrl ? `<img src="${data.imageUrl}" alt="${data.name}">` : ""}
+      <div class="comment-section" id="comments-${id}"></div>
+      <div class="add-comment">
+        <select id="emoji-${id}">
+          <option value="💬">💬</option>
+          <option value="🌶️">🌶️</option>
+          <option value="🧊">🧊</option>
+          <option value="😋">😋</option>
+          <option value="🌟">🌟</option>
+          <option value="❤️‍🔥">❤️‍🔥</option>
+          <option value="👍">👍</option>
+          <option value="🥵">🥵</option>
+          <option value="🥶">🥶</option>
+          <option value="😀">😀</option>
+        </select>
+        <input id="name-${id}" placeholder="Your name...">
+        <input id="comment-${id}" placeholder="Your comment...">
+        <button onclick="addComment('${id}')">Post 💬</button>
       </div>
-      <p>Average Rating: ${avgRating} (${food.numRatings} ratings)</p>
     `;
+    foodCardArray.appendChild(foodCard);
 
-    foodCardArray.appendChild(card);
+    loadComments(id);
   });
-
-  attachStarListeners();
 });
 
-// ✅ Handle star ratings with hover and click
-function attachStarListeners() {
-  document.querySelectorAll(".stars").forEach(starDiv => {
-    const spans = Array.from(starDiv.querySelectorAll("span"));
-    const foodId = starDiv.dataset.id;
+// Add comment
+async function addComment(foodId) {
+  const emoji = document.getElementById(`emoji-${foodId}`).value || "💬";
+  const name = document.getElementById(`name-${foodId}`).value.trim() || "Anonymous";
+  const comment = document.getElementById(`comment-${foodId}`).value.trim();
 
-    spans.forEach(star => {
-      // Hover effect
-      star.addEventListener("mouseenter", (e) => {
-        const value = parseInt(e.target.dataset.value);
-        spans.forEach((sp, i) => sp.classList.toggle("hovered", i < value));
-      });
+  if (!comment) return alert("Please enter a comment!");
 
-      starDiv.addEventListener("mouseleave", () => {
-        spans.forEach(sp => sp.classList.remove("hovered"));
-      });
+  await db.collection("foods").doc(foodId).collection("comments").add({
+    emoji,
+    name,
+    comment,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
-      // Click rating
-      star.addEventListener("click", async (e) => {
-        const value = parseInt(e.target.dataset.value);
-        const docRef = db.collection("foods").doc(foodId);
-        const docSnap = await docRef.get();
+  document.getElementById(`comment-${foodId}`).value = "";
+}
 
-        if (docSnap.exists) {
-          const food = docSnap.data();
-          const newTotal = (food.rating || 0) + value;
-          const newCount = (food.numRatings || 0) + 1;
-
-          await docRef.update({
-            rating: newTotal,
-            numRatings: newCount
-          });
-
-          // Update visuals immediately
-          spans.forEach((sp, i) => sp.classList.toggle("active", i < value));
-        }
-      });
+// Load comments
+function loadComments(foodId) {
+  const commentsDiv = document.getElementById(`comments-${foodId}`);
+  db.collection("foods").doc(foodId).collection("comments").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+    commentsDiv.innerHTML = "";
+    snapshot.forEach(doc => {
+      const c = doc.data();
+      commentsDiv.innerHTML += `<div class="comment">${c.emoji} <b>${c.name}</b>: ${c.comment}</div>`;
     });
   });
+}
+
+// Add request
+addRequestBtn.onclick = async () => {
+  const text = requestInput.value.trim();
+  if (!text) return alert("Please enter your request!");
+  await db.collection("requests").add({
+    requestText: text,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  requestInput.value = "";
+};
+
+// Load requests
+db.collection("requests").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+  requestsList.innerHTML = "";
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const li = document.createElement("li");
+    li.innerHTML = `${data.requestText} <button class="delete-btn" onclick="deleteRequest('${doc.id}')">🗑️</button>`;
+    requestsList.appendChild(li);
+  });
+});
+
+// Delete request
+async function deleteRequest(id) {
+  await db.collection("requests").doc(id).delete();
 }
