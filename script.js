@@ -1,88 +1,63 @@
-// ===== Firebase Setup =====
-const firebaseConfig = {
-  apiKey: "AIzaSyBNDByWKc8Asfd-S70OEIuVpxQ3xG-bgss",
-  authDomain: "foodkitchen-37f44.firebaseapp.com",
-  projectId: "foodkitchen-37f44",
-  storageBucket: "foodkitchen-37f44.firebasestorage.app",
-  messagingSenderId: "803378208472",
-  appId: "1:803378208472:web:bb30cf298391ba16d901ad",
-  measurementId: "G-29DDTPH087",
-};
-
-firebase.initializeApp(firebaseConfig);
+// ✅ Firebase already initialized in HTML
 const db = firebase.firestore();
-const storage = firebase.storage();
 
-// ===== DOM Elements =====
 const foodCardArray = document.getElementById("foodCardArray");
-const addFoodForm = document.getElementById("addFoodForm");
+const addFoodBtn = document.getElementById("addFood");
+const foodsTab = document.getElementById("foodsTab");
+const requestsTab = document.getElementById("requestsTab");
+const foodsSection = document.getElementById("foodsSection");
+const requestsSection = document.getElementById("requestsSection");
+const addRequestBtn = document.getElementById("addRequest");
+const requestsList = document.getElementById("requestsList");
 
-// ===== Add Food =====
-addFoodForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
+// 🌶️ Add new food
+addFoodBtn.addEventListener("click", async () => {
   const name = document.getElementById("foodName").value.trim();
-  const category = document.getElementById("foodCategory").value;
-  const fileInput = document.getElementById("foodImage");
-  const file = fileInput.files[0];
+  const image = document.getElementById("foodImage").value.trim();
+  const flavor = document.getElementById("foodFlavor").value;
 
-  if (!name || !category) {
-    alert("Please fill out all fields!");
-    return;
-  }
+  if (!name || !flavor) return alert("Please enter a name and flavor!");
 
-  let imageUrl = "";
+  await db.collection("foods").add({
+    name,
+    image,
+    flavor,
+    stars: 0,
+    totalRatings: 0,
+    created: firebase.firestore.FieldValue.serverTimestamp(),
+    comments: []
+  });
 
-  try {
-    if (file) {
-      const storageRef = storage.ref("foodImages/" + file.name);
-      await storageRef.put(file);
-      imageUrl = await storageRef.getDownloadURL();
-    }
-
-    await db.collection("foods").add({
-      name,
-      category,
-      imageUrl,
-      rating: 0,
-      ratingCount: 0,
-      comments: [],
-      createdAt: Date.now(),
-    });
-
-    addFoodForm.reset();
-  } catch (err) {
-    console.error("Error adding food:", err);
-  }
+  document.getElementById("foodName").value = "";
+  document.getElementById("foodImage").value = "";
+  document.getElementById("foodFlavor").value = "";
 });
 
-// ===== Display Foods =====
-db.collection("foods").onSnapshot((snapshot) => {
+// 🍗 Render foods
+db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
   foodCardArray.innerHTML = "";
-  const foods = [];
-  snapshot.forEach((d) => foods.push({ id: d.id, ...d.data() }));
-  foods.sort((a, b) => b.createdAt - a.createdAt);
+  snapshot.forEach(doc => {
+    const food = doc.data();
+    const id = doc.id;
 
-  foods.forEach((food) => {
     const card = document.createElement("div");
-    card.classList.add("foodCard", food.category);
+    card.classList.add("foodCard", food.flavor);
 
-    const ratingValue = Number(food.rating) || 0;
-    const ratingCount = Number(food.ratingCount) || 0;
+    const emoji = food.flavor === "spicy" ? "🌶️" :
+                   food.flavor === "savory" ? "🍗" :
+                   food.flavor === "sweet" ? "🍰" :
+                   food.flavor === "cool" ? "🧊" :
+                   "🥬";
 
-    const imgHTML = food.imageUrl
-      ? `<img src="${food.imageUrl}" alt="${food.name}">`
-      : `<div class="no-image"><i>No image</i></div>`;
+    const avgRating = food.totalRatings > 0 ? (food.stars).toFixed(1) : "0.0";
 
     card.innerHTML = `
-      <h3>${food.name}</h3>
-      ${imgHTML}
-      <div class="rating-display">${ratingValue.toFixed(1)}/5 : ${ratingCount} ratings</div>
-      <div class="stars" data-id="${food.id}">
-        ${[1, 2, 3, 4, 5].map(i => `<span data-star="${i}">★</span>`).join("")}
-      </div>
+      <h2>${food.name} ${emoji}</h2>
+      ${food.image ? `<img src="${food.image}" alt="${food.name}">` : ""}
+      <div class="rating-display">⭐ ${avgRating}/5 : ${food.totalRatings || 0} ratings</div>
+      <div class="stars">${[1,2,3,4,5].map(i=>`<span data-star="${i}">★</span>`).join('')}</div>
       <div class="comments">
-        ${(food.comments || []).map(c => `<div class="comment">${c}</div>`).join("")}
+        ${(food.comments || []).map(c => `<div class="comment">${c.emoji} <b>${c.name}</b>: ${c.text}</div>`).join('')}
       </div>
       <div class="comment-input">
         <select class="commenter">
@@ -92,62 +67,110 @@ db.collection("foods").onSnapshot((snapshot) => {
           <option value="Olive">Olive</option>
           <option value="German">German</option>
           <option value="Olivia">Olivia</option>
-          <option value="custom">Custom...</option>
+          <option value="custom">Custom</option>
         </select>
-        <input type="text" class="customName" placeholder="Your name here..." style="display:none;">
-        <input type="text" class="commentText" placeholder="Add a comment...">
-        <button class="submitComment">Comment</button>
+        <input type="text" class="customName" placeholder="Enter custom name..." style="display:none;">
+        <select class="emoji">
+          <option value="💬">💬</option>
+          <option value="🌶️">🌶️</option>
+          <option value="🧊">🧊</option>
+          <option value="😋">😋</option>
+          <option value="🌟">🌟</option>
+          <option value="❤️‍🔥">❤️‍🔥</option>
+          <option value="👍">👍</option>
+          <option value="🥵">🥵</option>
+          <option value="🥶">🥶</option>
+          <option value="😀">😀</option>
+        </select>
+        <input type="text" class="commentText" placeholder="Add comment...">
+        <button>Add</button>
       </div>
     `;
-    foodCardArray.appendChild(card);
 
-    // Custom name toggle
-    const commenterSelect = card.querySelector(".commenter");
-    const customNameInput = card.querySelector(".customName");
-    commenterSelect.addEventListener("change", () => {
-      customNameInput.style.display =
-        commenterSelect.value === "custom" ? "block" : "none";
-    });
-
-    // Add comment
-    const commentBtn = card.querySelector(".submitComment");
-    commentBtn.addEventListener("click", async () => {
-      const commentText = card.querySelector(".commentText").value.trim();
-      const commenter =
-        commenterSelect.value === "custom"
-          ? customNameInput.value.trim()
-          : commenterSelect.value;
-      const emoji = "💬"; // default
-      if (!commentText) {
-        alert("Please enter a comment.");
-        return;
-      }
-      const comment = `${emoji} <b>${commenter || "Anonymous"}</b>: ${commentText}`;
-      const docRef = db.collection("foods").doc(food.id);
-      await docRef.update({
-        comments: firebase.firestore.FieldValue.arrayUnion(comment),
-      });
-    });
-
-    // Add rating
+    // ⭐ Highlight stars
     const stars = card.querySelectorAll(".stars span");
-    stars.forEach((star) => {
+    stars.forEach(star => {
+      const starValue = parseInt(star.dataset.star);
+      if (food.stars >= starValue - 0.5) star.classList.add("active");
       star.addEventListener("click", async () => {
-        const rating = Number(star.dataset.star);
-        const docRef = db.collection("foods").doc(food.id);
-        await db.runTransaction(async (transaction) => {
-          const doc = await transaction.get(docRef);
-          if (!doc.exists) return;
-          const data = doc.data();
-          const newCount = (data.ratingCount || 0) + 1;
-          const newRating =
-            ((data.rating || 0) * (data.ratingCount || 0) + rating) / newCount;
-          transaction.update(docRef, {
-            rating: newRating,
-            ratingCount: newCount,
-          });
+        const rating = parseInt(star.dataset.star);
+        const total = (food.totalRatings || 0) + 1;
+        const avg = ((food.stars || 0) * (food.totalRatings || 0) + rating) / total;
+        await db.collection("foods").doc(id).update({
+          stars: avg,
+          totalRatings: total
         });
       });
     });
+
+    // 💬 Add comment
+    const commentBtn = card.querySelector(".comment-input button");
+    const commentInput = card.querySelector(".commentText");
+    const commenterSelect = card.querySelector(".comment-input .commenter");
+    const customNameInput = card.querySelector(".customName");
+    const emojiSelect = card.querySelector(".comment-input .emoji");
+
+    commenterSelect.addEventListener("change", () => {
+      customNameInput.style.display = commenterSelect.value === "custom" ? "block" : "none";
+    });
+
+    commentBtn.addEventListener("click", async () => {
+      const text = commentInput.value.trim();
+      let name = commenterSelect.value === "custom" 
+        ? customNameInput.value.trim() 
+        : commenterSelect.value || "Guest";
+      const emoji = emojiSelect.value || "💬";
+      if (!text) return;
+
+      const comments = food.comments || [];
+      comments.push({ name, text, emoji });
+      await db.collection("foods").doc(id).update({ comments });
+
+      commentInput.value = "";
+      customNameInput.value = "";
+    });
+
+    foodCardArray.appendChild(card);
   });
+});
+
+// 🍕 Add request
+addRequestBtn.addEventListener("click", async () => {
+  const text = document.getElementById("requestInput").value.trim();
+  if (!text) return;
+  await db.collection("requests").add({
+    text,
+    created: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  document.getElementById("requestInput").value = "";
+});
+
+// 🧾 Display requests
+db.collection("requests").orderBy("created", "desc").onSnapshot(snapshot => {
+  requestsList.innerHTML = "";
+  snapshot.forEach(doc => {
+    const req = doc.data();
+    const li = document.createElement("li");
+    li.textContent = req.text;
+    const btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.addEventListener("click", () => db.collection("requests").doc(doc.id).delete());
+    li.appendChild(btn);
+    requestsList.appendChild(li);
+  });
+});
+
+// ✨ Tab switching
+foodsTab.addEventListener("click", () => {
+  foodsSection.classList.add("active-section");
+  requestsSection.classList.remove("active-section");
+  foodsTab.classList.add("active");
+  requestsTab.classList.remove("active");
+});
+
+requestsTab.addEventListener("click", () => {
+  requestsSection.classList.add("active-section");
+  foodsSection.classList.remove("active-section");
+  requestsTab.classList.add("active");
+  foodsTab.classList.remove("active");
 });
