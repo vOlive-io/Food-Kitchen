@@ -3,48 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Food Kitchen 🍴</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Food Kitchen 🍽️</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 </head>
 <body>
-  <h1>🍴 Food Kitchen</h1>
+  <header>
+    <h1>🍴 Food Kitchen</h1>
+    <p>Explore, rate, and comment on delicious foods!</p>
+  </header>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button id="foodTab" class="active">Foods</button>
-    <button id="requestTab">Requests</button>
-  </div>
-
-  <!-- Food Section -->
-  <section id="foodSection" class="active-section">
-    <h2>Add a New Food</h2>
+  <section id="addFoodSection">
+    <h2>Add New Food</h2>
     <form id="addFoodForm">
-      <input type="text" id="foodName" placeholder="Food name..." required>
-      <input type="file" id="foodImage" accept="image/*">
+      <input type="text" id="foodName" placeholder="Food name..." required />
       <select id="foodCategory" required>
         <option value="">Select category</option>
-        <option value="spicy">Spicy 🌶️</option>
-        <option value="savory">Savory 🍗</option>
-        <option value="sweet">Sweet 🍰</option>
-        <option value="cool">Cool 🧊</option>
-        <option value="greens">Greens 🥬</option>
+        <option value="Spicy">Spicy 🌶️</option>
+        <option value="Savory">Savory 🍗</option>
+        <option value="Sweet">Sweet 🍰</option>
+        <option value="Cool">Cool 🧊</option>
+        <option value="Greens">Greens 🥬</option>
       </select>
+      <input type="file" id="foodImage" accept="image/*" />
       <button type="submit">Add Food</button>
     </form>
+  </section>
 
+  <main>
+    <h2>🍲 Food Gallery</h2>
     <div id="foodCardArray"></div>
-  </section>
+  </main>
 
-  <!-- Requests Section -->
-  <section id="requestSection">
-    <h2>Food Requests 🍕</h2>
-    <form id="addRequestForm">
-      <input type="text" id="foodRequest" placeholder="Request a food..." required>
-      <button type="submit">Add Request</button>
-    </form>
-    <ul id="requestList"></ul>
-  </section>
+  <footer>
+    <p>Made with ❤️ for food lovers everywhere</p>
+  </footer>
 
-  <script type="module" src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
