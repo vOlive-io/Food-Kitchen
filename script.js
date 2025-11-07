@@ -1,4 +1,4 @@
-// Firebase imports
+// ✅ Firebase Setup
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, onSnapshot, updateDoc, doc
@@ -7,7 +7,6 @@ import {
   getStorage, ref, uploadBytes, getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBNDByWKc8Asfd-S70OEIuVpxQ3xG-bgss",
   authDomain: "foodkitchen-37f44.firebaseapp.com",
@@ -17,36 +16,33 @@ const firebaseConfig = {
   appId: "1:803378208472:web:bb30cf298391ba16d901ad",
   measurementId: "G-29DDTPH087"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// DOM Elements
+// 📦 DOM
 const addFoodForm = document.getElementById("addFoodForm");
 const foodCardArray = document.getElementById("foodCardArray");
 const addRequestForm = document.getElementById("addRequestForm");
 const requestList = document.getElementById("requestList");
-const foodTab = document.getElementById("foodTab");
-const requestTab = document.getElementById("requestTab");
-const foodSection = document.getElementById("foodSection");
-const requestSection = document.getElementById("requestSection");
 
-// Tabs
-foodTab.addEventListener("click", () => {
-  foodTab.classList.add("active");
-  requestTab.classList.remove("active");
-  foodSection.classList.add("active-section");
-  requestSection.classList.remove("active-section");
-});
+// 🧭 Tabs
+document.getElementById("foodTab").onclick = () => {
+  document.getElementById("foodTab").classList.add("active");
+  document.getElementById("requestTab").classList.remove("active");
+  document.getElementById("foodSection").classList.add("active-section");
+  document.getElementById("requestSection").classList.remove("active-section");
+};
 
-requestTab.addEventListener("click", () => {
-  requestTab.classList.add("active");
-  foodTab.classList.remove("active");
-  requestSection.classList.add("active-section");
-  foodSection.classList.remove("active-section");
-});
+document.getElementById("requestTab").onclick = () => {
+  document.getElementById("requestTab").classList.add("active");
+  document.getElementById("foodTab").classList.remove("active");
+  document.getElementById("requestSection").classList.add("active-section");
+  document.getElementById("foodSection").classList.remove("active-section");
+};
 
-// Add Food
+// 🍲 Add Food
 addFoodForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = document.getElementById("foodName").value.trim();
@@ -55,9 +51,9 @@ addFoodForm.addEventListener("submit", async (e) => {
   let imageUrl = "";
 
   if (imageFile) {
-    const storageRef = ref(storage, `foodImages/${Date.now()}_${imageFile.name}`);
-    await uploadBytes(storageRef, imageFile);
-    imageUrl = await getDownloadURL(storageRef);
+    const imageRef = ref(storage, `foodImages/${Date.now()}_${imageFile.name}`);
+    await uploadBytes(imageRef, imageFile);
+    imageUrl = await getDownloadURL(imageRef);
   }
 
   await addDoc(collection(db, "foods"), {
@@ -73,28 +69,27 @@ addFoodForm.addEventListener("submit", async (e) => {
   addFoodForm.reset();
 });
 
-// Display Foods
+// 🧊 Display Foods
 onSnapshot(collection(db, "foods"), (snapshot) => {
   foodCardArray.innerHTML = "";
   const foods = [];
-  snapshot.forEach((doc) => foods.push({ id: doc.id, ...doc.data() }));
-
-  foods.sort((a, b) => b.createdAt - a.createdAt); // Newest first
+  snapshot.forEach((d) => foods.push({ id: d.id, ...d.data() }));
+  foods.sort((a, b) => b.createdAt - a.createdAt);
 
   foods.forEach((food) => {
     const card = document.createElement("div");
     card.classList.add("foodCard", food.category);
 
-    const img = food.imageUrl
+    const imgHTML = food.imageUrl
       ? `<img src="${food.imageUrl}" alt="${food.name}">`
-      : "";
+      : `<div style="height:180px;background:#fff3;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i>No image</i></div>`;
 
     card.innerHTML = `
       <h3>${food.name}</h3>
-      ${img}
+      ${imgHTML}
       <div class="rating-display">${food.rating.toFixed(1)}/5 : ${food.ratingCount} ratings</div>
       <div class="stars" data-id="${food.id}">
-        ${[1,2,3,4,5].map(i => `<span data-star="${i}">★</span>`).join('')}
+        ${[1,2,3,4,5].map(i => `<span data-star="${i}">★</span>`).join("")}
       </div>
       <div class="comments">
         ${(food.comments || []).map(c => `<div class="comment">${c}</div>`).join("")}
@@ -115,21 +110,18 @@ onSnapshot(collection(db, "foods"), (snapshot) => {
       </div>
     `;
 
-    // Stars
+    // ⭐ Ratings
     const stars = card.querySelectorAll(".stars span");
     stars.forEach((star, i) => {
       if (i < Math.round(food.rating)) star.classList.add("active");
       star.addEventListener("click", async () => {
-        const newRatingCount = (food.ratingCount || 0) + 1;
-        const newRating = ((food.rating || 0) * (food.ratingCount || 0) + (i + 1)) / newRatingCount;
-        await updateDoc(doc(db, "foods", food.id), {
-          rating: newRating,
-          ratingCount: newRatingCount
-        });
+        const newCount = (food.ratingCount || 0) + 1;
+        const newRating = ((food.rating || 0) * (food.ratingCount || 0) + (i + 1)) / newCount;
+        await updateDoc(doc(db, "foods", food.id), { rating: newRating, ratingCount: newCount });
       });
     });
 
-    // Comments
+    // 💬 Comments
     const commenterSelect = card.querySelector(".commenter");
     const customNameInput = card.querySelector(".customName");
     const commentText = card.querySelector(".commentText");
@@ -148,13 +140,11 @@ onSnapshot(collection(db, "foods"), (snapshot) => {
       if (name === "custom") name = customNameInput.value.trim();
       if (!name) name = "💬";
 
-      const emojis = ["🌶️","🧊","😋","🌟","❤️‍🔥","👍","💬","🥵","🥶","😀"];
       const emoji = "💬";
       const newComment = `${emoji} <b>${name}</b>: ${commentText.value.trim()}`;
-
       if (commentText.value.trim() !== "") {
-        const newComments = [...(food.comments || []), newComment];
-        await updateDoc(doc(db, "foods", food.id), { comments: newComments });
+        const updatedComments = [...(food.comments || []), newComment];
+        await updateDoc(doc(db, "foods", food.id), { comments: updatedComments });
         commentText.value = "";
       }
     });
@@ -163,24 +153,24 @@ onSnapshot(collection(db, "foods"), (snapshot) => {
   });
 });
 
-// Food Requests
+// 🍕 Requests
 addRequestForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const request = document.getElementById("foodRequest").value.trim();
-  if (request) {
-    await addDoc(collection(db, "requests"), { request });
+  const reqText = document.getElementById("foodRequest").value.trim();
+  if (reqText) {
+    await addDoc(collection(db, "requests"), { request: reqText });
     addRequestForm.reset();
   }
 });
 
 onSnapshot(collection(db, "requests"), (snapshot) => {
   requestList.innerHTML = "";
-  snapshot.forEach((doc) => {
+  snapshot.forEach((docSnap) => {
     const li = document.createElement("li");
-    li.textContent = doc.data().request;
+    li.textContent = docSnap.data().request;
     li.addEventListener("click", async () => {
-      await updateDoc(doc.ref, { request: "[REMOVED]" });
       li.remove();
+      await updateDoc(docSnap.ref, { request: "[REMOVED]" });
     });
     requestList.appendChild(li);
   });
