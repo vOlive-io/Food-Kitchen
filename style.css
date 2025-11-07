@@ -83,7 +83,7 @@ button:hover {
   margin-bottom: 10px;
 }
 
-/* 🍱 Flavor Gradients */
+/* Gradients per flavor */
 .spicy {
   background: linear-gradient(135deg, #ffb3b3, #ff4d4d);
 }
@@ -100,7 +100,6 @@ button:hover {
   background: linear-gradient(135deg, #b4ff8b, #2ecc71);
 }
 
-/* ⭐ Stars + Comments */
 .stars span {
   font-size: 24px;
   cursor: pointer;
