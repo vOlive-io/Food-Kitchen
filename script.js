@@ -1,12 +1,4 @@
-// ✅ Firebase Setup
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, onSnapshot, updateDoc, doc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import {
-  getStorage, ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
+// ===== Firebase Setup =====
 const firebaseConfig = {
   apiKey: "AIzaSyBNDByWKc8Asfd-S70OEIuVpxQ3xG-bgss",
   authDomain: "foodkitchen-37f44.firebaseapp.com",
@@ -14,63 +6,58 @@ const firebaseConfig = {
   storageBucket: "foodkitchen-37f44.firebasestorage.app",
   messagingSenderId: "803378208472",
   appId: "1:803378208472:web:bb30cf298391ba16d901ad",
-  measurementId: "G-29DDTPH087"
+  measurementId: "G-29DDTPH087",
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-// 📦 DOM
-const addFoodForm = document.getElementById("addFoodForm");
+// ===== DOM Elements =====
 const foodCardArray = document.getElementById("foodCardArray");
-const addRequestForm = document.getElementById("addRequestForm");
-const requestList = document.getElementById("requestList");
+const addFoodForm = document.getElementById("addFoodForm");
 
-// 🧭 Tabs
-document.getElementById("foodTab").onclick = () => {
-  document.getElementById("foodTab").classList.add("active");
-  document.getElementById("requestTab").classList.remove("active");
-  document.getElementById("foodSection").classList.add("active-section");
-  document.getElementById("requestSection").classList.remove("active-section");
-};
-
-document.getElementById("requestTab").onclick = () => {
-  document.getElementById("requestTab").classList.add("active");
-  document.getElementById("foodTab").classList.remove("active");
-  document.getElementById("requestSection").classList.add("active-section");
-  document.getElementById("foodSection").classList.remove("active-section");
-};
-
-// 🍲 Add Food
+// ===== Add Food =====
 addFoodForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const name = document.getElementById("foodName").value.trim();
   const category = document.getElementById("foodCategory").value;
-  const imageFile = document.getElementById("foodImage").files[0];
-  let imageUrl = "";
+  const fileInput = document.getElementById("foodImage");
+  const file = fileInput.files[0];
 
-  if (imageFile) {
-    const imageRef = ref(storage, `foodImages/${Date.now()}_${imageFile.name}`);
-    await uploadBytes(imageRef, imageFile);
-    imageUrl = await getDownloadURL(imageRef);
+  if (!name || !category) {
+    alert("Please fill out all fields!");
+    return;
   }
 
-  await addDoc(collection(db, "foods"), {
-    name,
-    category,
-    imageUrl,
-    rating: 0,
-    ratingCount: 0,
-    comments: [],
-    createdAt: Date.now()
-  });
+  let imageUrl = "";
 
-  addFoodForm.reset();
+  try {
+    if (file) {
+      const storageRef = storage.ref("foodImages/" + file.name);
+      await storageRef.put(file);
+      imageUrl = await storageRef.getDownloadURL();
+    }
+
+    await db.collection("foods").add({
+      name,
+      category,
+      imageUrl,
+      rating: 0,
+      ratingCount: 0,
+      comments: [],
+      createdAt: Date.now(),
+    });
+
+    addFoodForm.reset();
+  } catch (err) {
+    console.error("Error adding food:", err);
+  }
 });
 
-// 🧊 Display Foods
-onSnapshot(collection(db, "foods"), (snapshot) => {
+// ===== Display Foods =====
+db.collection("foods").onSnapshot((snapshot) => {
   foodCardArray.innerHTML = "";
   const foods = [];
   snapshot.forEach((d) => foods.push({ id: d.id, ...d.data() }));
@@ -80,16 +67,20 @@ onSnapshot(collection(db, "foods"), (snapshot) => {
     const card = document.createElement("div");
     card.classList.add("foodCard", food.category);
 
+    // prevent crash on missing data
+    const ratingValue = Number(food.rating) || 0;
+    const ratingCount = Number(food.ratingCount) || 0;
+
     const imgHTML = food.imageUrl
       ? `<img src="${food.imageUrl}" alt="${food.name}">`
-      : `<div style="height:180px;background:#fff3;border-radius:10px;display:flex;align-items:center;justify-content:center;"><i>No image</i></div>`;
+      : `<div class="no-image"><i>No image</i></div>`;
 
     card.innerHTML = `
       <h3>${food.name}</h3>
       ${imgHTML}
-      <div class="rating-display">${food.rating.toFixed(1)}/5 : ${food.ratingCount} ratings</div>
+      <div class="rating-display">${ratingValue.toFixed(1)}/5 : ${ratingCount} ratings</div>
       <div class="stars" data-id="${food.id}">
-        ${[1,2,3,4,5].map(i => `<span data-star="${i}">★</span>`).join("")}
+        ${[1, 2, 3, 4, 5].map(i => `<span data-star="${i}">★</span>`).join("")}
       </div>
       <div class="comments">
         ${(food.comments || []).map(c => `<div class="comment">${c}</div>`).join("")}
@@ -104,74 +95,63 @@ onSnapshot(collection(db, "foods"), (snapshot) => {
           <option value="Olivia">Olivia</option>
           <option value="custom">Custom...</option>
         </select>
-        <input type="text" class="customName" placeholder="Your name here...">
+        <input type="text" class="customName" placeholder="Your name here..." style="display:none;">
         <input type="text" class="commentText" placeholder="Add a comment...">
         <button class="submitComment">Comment</button>
       </div>
     `;
+    foodCardArray.appendChild(card);
 
-    // ⭐ Ratings
-    const stars = card.querySelectorAll(".stars span");
-    stars.forEach((star, i) => {
-      if (i < Math.round(food.rating)) star.classList.add("active");
-      star.addEventListener("click", async () => {
-        const newCount = (food.ratingCount || 0) + 1;
-        const newRating = ((food.rating || 0) * (food.ratingCount || 0) + (i + 1)) / newCount;
-        await updateDoc(doc(db, "foods", food.id), { rating: newRating, ratingCount: newCount });
+    // Custom name toggle
+    const commenterSelect = card.querySelector(".commenter");
+    const customNameInput = card.querySelector(".customName");
+    commenterSelect.addEventListener("change", () => {
+      customNameInput.style.display =
+        commenterSelect.value === "custom" ? "block" : "none";
+    });
+
+    // Add comment
+    const commentBtn = card.querySelector(".submitComment");
+    commentBtn.addEventListener("click", async () => {
+      const commentText = card.querySelector(".commentText").value.trim();
+      const commenter =
+        commenterSelect.value === "custom"
+          ? customNameInput.value.trim()
+          : commenterSelect.value;
+      const emojiList = ["🌶️", "🧊", "😋", "🌟", "❤️‍🔥", "👍", "💬", "🥵", "🥶", "😀"];
+      const emoji = "💬"; // default
+
+      if (!commentText) {
+        alert("Please enter a comment.");
+        return;
+      }
+
+      const comment = `${emoji} <b>${commenter || "Anonymous"}</b>: ${commentText}`;
+      const docRef = db.collection("foods").doc(food.id);
+      await docRef.update({
+        comments: firebase.firestore.FieldValue.arrayUnion(comment),
       });
     });
 
-    // 💬 Comments
-    const commenterSelect = card.querySelector(".commenter");
-    const customNameInput = card.querySelector(".customName");
-    const commentText = card.querySelector(".commentText");
-    const submitComment = card.querySelector(".submitComment");
-
-    commenterSelect.addEventListener("change", () => {
-      if (commenterSelect.value === "custom") {
-        customNameInput.parentElement.classList.add("showCustom");
-      } else {
-        customNameInput.parentElement.classList.remove("showCustom");
-      }
+    // Add rating
+    const stars = card.querySelectorAll(".stars span");
+    stars.forEach((star) => {
+      star.addEventListener("click", async () => {
+        const rating = Number(star.dataset.star);
+        const docRef = db.collection("foods").doc(food.id);
+        await db.runTransaction(async (transaction) => {
+          const doc = await transaction.get(docRef);
+          if (!doc.exists) return;
+          const data = doc.data();
+          const newCount = (data.ratingCount || 0) + 1;
+          const newRating =
+            ((data.rating || 0) * (data.ratingCount || 0) + rating) / newCount;
+          transaction.update(docRef, {
+            rating: newRating,
+            ratingCount: newCount,
+          });
+        });
+      });
     });
-
-    submitComment.addEventListener("click", async () => {
-      let name = commenterSelect.value;
-      if (name === "custom") name = customNameInput.value.trim();
-      if (!name) name = "💬";
-
-      const emoji = "💬";
-      const newComment = `${emoji} <b>${name}</b>: ${commentText.value.trim()}`;
-      if (commentText.value.trim() !== "") {
-        const updatedComments = [...(food.comments || []), newComment];
-        await updateDoc(doc(db, "foods", food.id), { comments: updatedComments });
-        commentText.value = "";
-      }
-    });
-
-    foodCardArray.appendChild(card);
-  });
-});
-
-// 🍕 Requests
-addRequestForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const reqText = document.getElementById("foodRequest").value.trim();
-  if (reqText) {
-    await addDoc(collection(db, "requests"), { request: reqText });
-    addRequestForm.reset();
-  }
-});
-
-onSnapshot(collection(db, "requests"), (snapshot) => {
-  requestList.innerHTML = "";
-  snapshot.forEach((docSnap) => {
-    const li = document.createElement("li");
-    li.textContent = docSnap.data().request;
-    li.addEventListener("click", async () => {
-      li.remove();
-      await updateDoc(docSnap.ref, { request: "[REMOVED]" });
-    });
-    requestList.appendChild(li);
   });
 });
