@@ -1,158 +1,186 @@
-@import url('https://fonts.googleapis.com/css2?family=Delius&family=Oregano:ital@0;1&display=swap');
-
 body {
-  font-family: 'Delius', 'Oregano', cursive;
-  background: #fff9f4;
-  color: #333;
-  padding: 20px;
-  margin: 0 auto;
-  max-width: 1200px;
-}
-
-header {
+  background: #fffaf4;
+  font-family: "Comic Sans MS", cursive;
+  margin: 0;
+  padding: 0;
   text-align: center;
-  margin-bottom: 20px;
 }
 
-nav {
-  text-align: center;
-  margin-bottom: 20px;
+.tabs {
+  display: flex;
+  justify-content: center;
+  background: #ffd7a3;
+  padding: 10px;
+  gap: 10px;
 }
 
-nav button {
-  margin: 5px;
-  padding: 8px 15px;
+.tabs button {
   border: none;
-  background: #ffdaaf;
-  border-radius: 12px;
-  font-weight: bold;
+  background: #fff3d1;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 16px;
   cursor: pointer;
   transition: 0.3s;
 }
 
-nav button.active {
-  background: #ff9f68;
+.tabs button.active {
+  background: #ffae42;
   color: white;
 }
 
-/* Sections */
 section {
   display: none;
+  padding: 20px;
 }
+
 .active-section {
   display: block;
 }
-.hidden {
-  display: none;
-}
 
-.form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
+.addFoodBox, .addRequestBox {
+  background: #ffeecf;
+  padding: 15px;
+  border-radius: 15px;
+  display: inline-block;
   margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.form input, .form select {
+.addFoodBox input, .addRequestBox input, select {
   padding: 8px;
+  margin: 5px;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  border: 1px solid #ccc;
 }
 
-button {
-  background: #ffd166;
-  border: none;
-  border-radius: 8px;
+.addFoodBox button, .addRequestBox button {
   padding: 8px 15px;
+  border: none;
+  border-radius: 10px;
+  background: #ffae42;
+  color: white;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-button:hover {
-  background: #ffb347;
-}
-
-/* Foods Grid */
 #foodCardArray {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin: 20px;
 }
 
 .foodCard {
-  width: 85%;
   border-radius: 15px;
   padding: 15px;
-  color: #222;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .foodCard img {
   width: 100%;
   border-radius: 12px;
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
-/* Gradients per flavor */
+/* Flavor gradients */
 .spicy {
-  background: linear-gradient(135deg, #ffb3b3, #ff4d4d);
+  background: linear-gradient(135deg, #ff5b5b, #ff9966);
 }
+
 .savory {
-  background: linear-gradient(135deg, #ffe082, #ffca28);
+  background: linear-gradient(135deg, #ffd95b, #ffae42);
 }
+
 .sweet {
-  background: linear-gradient(135deg, #ffc1e3, #ff8fab);
+  background: linear-gradient(135deg, #ff9ae2, #ffc2e2);
 }
+
 .cool {
-  background: linear-gradient(135deg, #b3e5fc, #4fc3f7);
+  background: linear-gradient(135deg, #9bd4ff, #a0e6ff);
 }
+
 .greens {
-  background: linear-gradient(135deg, #b4ff8b, #2ecc71);
-}
-
-.stars span {
-  font-size: 24px;
-  cursor: pointer;
-  color: lightgray;
-}
-.stars span.active {
-  color: gold;
-}
-
-.comment-input {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.comment-input input, .comment-input select {
-  flex: 1;
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.comment-input button {
-  flex: 0 0 auto;
-  padding: 6px 12px;
-}
-
-.comments {
-  margin-top: 10px;
-}
-
-.comment {
-  background: rgba(255,255,255,0.6);
-  border-radius: 8px;
-  padding: 4px 8px;
-  margin-bottom: 5px;
-  font-size: 0.9rem;
+  background: linear-gradient(135deg, #98f5b2, #59c97a);
 }
 
 .rating-display {
-  font-weight: bold;
-  margin-bottom: 6px;
+  margin: 5px 0;
+  font-size: 14px;
+  color: #fff;
+}
+
+.stars span {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.stars span:hover {
+  transform: scale(1.2);
+}
+
+.comment-input {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.comment-input input, .comment-input select {
+  border: none;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+.comment-input button {
+  background: white;
+  color: black;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.comment-input button:hover {
+  background: #fff8e7;
+}
+
+.comment {
+  background: rgba(255,255,255,0.2);
+  padding: 5px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+/* Requests styling */
+#requestsList {
+  list-style: none;
+  padding: 0;
+  margin: 10px auto;
+  max-width: 600px;
+}
+
+#requestsList li {
+  background: #fff3d1;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Delius', cursive;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+#requestsList button {
+  background: #ff8080;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+#requestsList button:hover {
+  background: #ff4d4d;
 }
