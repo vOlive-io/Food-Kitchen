@@ -1,3 +1,4 @@
+// ✅ No firebaseConfig or firebase.initializeApp here!
 const db = firebase.firestore();
 
 const foodCardArray = document.getElementById("foodCardArray");
