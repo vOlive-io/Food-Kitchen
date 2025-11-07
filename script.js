@@ -6,6 +6,21 @@ const requestsTab = document.getElementById("requestsTab");
 const foodsSection = document.getElementById("foodsSection");
 const requestsSection = document.getElementById("requestsSection");
 
+// Tab Switching
+foodsTab.addEventListener("click", () => {
+  foodsSection.classList.add("active-section");
+  requestsSection.classList.remove("active-section");
+  foodsTab.classList.add("active");
+  requestsTab.classList.remove("active");
+});
+
+requestsTab.addEventListener("click", () => {
+  requestsSection.classList.add("active-section");
+  foodsSection.classList.remove("active-section");
+  requestsTab.classList.add("active");
+  foodsTab.classList.remove("active");
+});
+
 // 🧑‍🍳 Add Food
 document.getElementById("addFood").addEventListener("click", async () => {
   const name = document.getElementById("foodName").value.trim();
@@ -29,7 +44,7 @@ document.getElementById("addFood").addEventListener("click", async () => {
   document.getElementById("foodFlavor").value = "";
 });
 
-// 🥗 Display Foods
+// 🍲 Display Foods
 const foodCardArray = document.getElementById("foodCardArray");
 db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
   foodCardArray.innerHTML = "";
@@ -143,19 +158,4 @@ db.collection("requests").orderBy("created", "desc").onSnapshot(snapshot => {
     li.appendChild(btn);
     requestsList.appendChild(li);
   });
-});
-
-// 🧭 Tabs
-foodsTab.addEventListener("click", () => {
-  foodsSection.classList.add("active-section");
-  requestsSection.classList.remove("active-section");
-  foodsTab.classList.add("active");
-  requestsTab.classList.remove("active");
-});
-
-requestsTab.addEventListener("click", () => {
-  requestsSection.classList.add("active-section");
-  foodsSection.classList.remove("active-section");
-  requestsTab.classList.add("active");
-  foodsTab.classList.remove("active");
 });
