@@ -1,165 +1,253 @@
-/* === Base Styles === */
-body {
-  margin: 0;
+* {
+  box-sizing: border-box;
   font-family: "Poppins", sans-serif;
-  background: #1a1a1a;
-  color: white;
-  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #faf9f6;
+  color: #333;
+  padding: 20px;
 }
 
 header {
-  background: linear-gradient(90deg, #ff9966, #ff5e62);
-  padding: 20px;
-  border-bottom: 4px solid #fff3;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 h1 {
-  margin: 0;
-  font-size: 2.5em;
+  font-size: 2rem;
+  margin-bottom: 10px;
 }
 
-h2 {
-  margin-top: 40px;
-  color: #ffdfc4;
+nav button {
+  background: #e8e8e8;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-/* === Add Food Form === */
-#addFoodSection {
-  background: #2a2a2a;
-  padding: 20px;
-  margin: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+nav button.active {
+  background: #f7b731;
+  color: #fff;
 }
 
-#addFoodForm {
+nav button:hover {
+  background: #f5cd79;
+  color: #222;
+}
+
+/* Sections */
+section {
+  display: none;
+}
+
+.active-section {
+  display: block;
+}
+
+/* Add Food */
+.addFoodBox {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
   justify-content: center;
 }
 
-#addFoodForm input,
-#addFoodForm select,
-#addFoodForm button {
-  padding: 10px;
+.addFoodBox input,
+.addFoodBox select {
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  border: none;
-  font-size: 1em;
+  width: 180px;
 }
 
-#addFoodForm button {
-  background: #ff5e62;
+.addFoodBox button {
+  background: #4caf50;
   color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
   cursor: pointer;
-  transition: 0.3s;
+  font-weight: 600;
+  transition: background 0.3s;
 }
 
-#addFoodForm button:hover {
-  background: #ff9966;
+.addFoodBox button:hover {
+  background: #3e8e41;
 }
 
-/* === Food Grid === */
+/* Food grid */
 #foodCardArray {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
-  padding: 20px;
 }
 
-/* === Food Card === */
+/* Food cards */
 .foodCard {
+  background: #fff;
   border-radius: 16px;
   padding: 15px;
-  color: white;
   text-align: center;
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
-  transition: transform 0.2s;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .foodCard:hover {
-  transform: scale(1.03);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .foodCard img {
   width: 100%;
-  height: 180px;
+  height: 160px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
 }
 
-.no-image {
-  width: 100%;
-  height: 180px;
-  background: #ffffff22;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-}
-
-/* === Gradients by Category === */
-.foodCard.Spicy { background: linear-gradient(135deg, #ff4b1f, #ff9068); }
-.foodCard.Savory { background: linear-gradient(135deg, #f9d423, #ff4e50); }
-.foodCard.Sweet { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
-.foodCard.Cool { background: linear-gradient(135deg, #83a4d4, #b6fbff); color: #222; }
-.foodCard.Greens { background: linear-gradient(135deg, #56ab2f, #a8e063); }
-
-/* === Ratings & Comments === */
-.stars span {
-  font-size: 24px;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.stars span:hover {
-  color: gold;
+.foodCard h2 {
+  margin-bottom: 10px;
+  font-size: 1.25rem;
 }
 
 .rating-display {
-  margin: 5px 0;
-  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 0.95em;
+  color: #666;
 }
 
+.stars span {
+  cursor: pointer;
+  font-size: 20px;
+  color: #ccc;
+  transition: color 0.2s;
+}
+
+.stars span.active {
+  color: #ffcc00;
+}
+
+/* Comment input */
 .comment-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin-top: 10px;
+  justify-content: center;
 }
 
-.comment-input input,
-.comment-input select {
+.comment-input select,
+.comment-input input {
   padding: 6px;
-  margin: 4px;
-  border-radius: 6px;
-  border: none;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
 .comment-input button {
-  background: #fff;
-  color: #333;
-  border: none;
   padding: 6px 10px;
-  border-radius: 6px;
+  background: #2196f3;
+  border: none;
+  color: white;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
+.comment-input button:hover {
+  background: #1976d2;
+}
+
+/* Comments */
 .comments {
+  margin-top: 10px;
   text-align: left;
-  margin-top: 8px;
-  background: #ffffff33;
-  padding: 8px;
-  border-radius: 8px;
   font-size: 0.9em;
 }
 
 .comment {
+  background: #f2f2f2;
+  border-radius: 8px;
+  padding: 5px 8px;
   margin: 4px 0;
-  word-wrap: break-word;
 }
 
-/* === Footer === */
-footer {
-  margin-top: 40px;
-  padding: 20px;
-  background: #111;
-  color: #bbb;
+/* Requests */
+.requestBox {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.requestBox input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 200px;
+}
+
+.requestBox button {
+  padding: 8px 12px;
+  background: #ff9800;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.requestBox button:hover {
+  background: #e68900;
+}
+
+ul#requestsList {
+  list-style: none;
+  padding: 0;
+  max-width: 400px;
+  margin: auto;
+}
+
+ul#requestsList li {
+  background: #fff;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* 🌈 Flavor Themes — Softer, tastier gradients */
+.spicy {
+  background: linear-gradient(135deg, #ff7b5c, #ff3d00);
+  color: #fff;
+}
+
+.savory {
+  background: linear-gradient(135deg, #ffe29f, #ffa751);
+  color: #5a3e00;
+}
+
+.sweet {
+  background: linear-gradient(135deg, #ffb6c1, #ffdde1);
+  color: #4d1f2a;
+}
+
+.cool {
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+  color: #003366;
+}
+
+.greens {
+  background: linear-gradient(135deg, #a8e063, #56ab2f);
+  color: #1b3e0a;
 }
