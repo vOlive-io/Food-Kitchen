@@ -3,29 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Food Kitchen</title>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Delius&family=Oregano:ital@0;1&display=swap" rel="stylesheet">
+  <title>Food Kitchen 🍽️</title>
   <link rel="stylesheet" href="style.css" />
-</head>
-
-<body>
-  <h1>🍳 Food Kitchen</h1>
-
-  <div id="addFoodForm">
-    <input id="foodInput" placeholder="Add food name..." />
-    <input id="foodImageUrl" placeholder="Paste image URL (optional)" />
-    <button id="addFood">Add Food</button>
-  </div>
-
-  <div id="foodCardArray"></div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <h1>🍴 Food Kitchen</h1>
 
-  <!-- Main script -->
+  <div class="tabs">
+    <button id="foodsTab" class="active">Foods 🍲</button>
+    <button id="requestsTab">Requests 🧾</button>
+  </div>
+
+  <!-- Food Section -->
+  <section id="foodsSection" class="active-section">
+    <div class="add-food">
+      <input id="foodName" placeholder="Food name..." />
+      <input id="foodImageUrl" placeholder="Image URL..." />
+      <select id="foodFlavor">
+        <option value="Spicy">Spicy 🌶️</option>
+        <option value="Savory">Savory 🍗</option>
+        <option value="Sweet">Sweet 🍰</option>
+        <option value="Cool">Cool 🧊</option>
+      </select>
+      <button id="addFood">Add Food</button>
+    </div>
+
+    <div id="foodCardArray"></div>
+  </section>
+
+  <!-- Requests Section -->
+  <section id="requestsSection">
+    <div class="add-request">
+      <input id="requestText" placeholder="Request a new food..." />
+      <button id="addRequest">Add Request</button>
+    </div>
+    <ul id="requestsList"></ul>
+  </section>
+
   <script src="script.js"></script>
 </body>
 </html>
