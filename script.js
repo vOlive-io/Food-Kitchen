@@ -6,7 +6,7 @@ const requestsTab = document.getElementById("requestsTab");
 const foodsSection = document.getElementById("foodsSection");
 const requestsSection = document.getElementById("requestsSection");
 
-// Tab Switching
+// 🟧 Tab Switching
 foodsTab.addEventListener("click", () => {
   foodsSection.classList.add("active-section");
   requestsSection.classList.remove("active-section");
@@ -27,7 +27,7 @@ document.getElementById("addFood").addEventListener("click", async () => {
   const image = document.getElementById("foodImage").value.trim();
   const flavor = document.getElementById("foodFlavor").value;
 
-  if (!name || !flavor) return alert("Please enter a name and flavor!");
+  if (!name || !flavor) return alert("Please enter a name and select a flavor!");
 
   await db.collection("foods").add({
     name,
@@ -132,13 +132,13 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
   });
 });
 
-// 🧾 Requests
+// 🧾 Requests Section
 const addRequestBtn = document.getElementById("addRequest");
 const requestsList = document.getElementById("requestsList");
 
 addRequestBtn.addEventListener("click", async () => {
   const text = document.getElementById("requestInput").value.trim();
-  if (!text) return;
+  if (!text) return alert("Enter a request before submitting!");
   await db.collection("requests").add({
     text,
     created: firebase.firestore.FieldValue.serverTimestamp()
@@ -148,10 +148,14 @@ addRequestBtn.addEventListener("click", async () => {
 
 db.collection("requests").orderBy("created", "desc").onSnapshot(snapshot => {
   requestsList.innerHTML = "";
+  if (snapshot.empty) {
+    requestsList.innerHTML = `<li style="opacity:0.7;">No requests yet. Add one above! 🍽️</li>`;
+    return;
+  }
   snapshot.forEach(doc => {
     const req = doc.data();
     const li = document.createElement("li");
-    li.textContent = req.text;
+    li.innerHTML = `<span>${req.text}</span>`;
     const btn = document.createElement("button");
     btn.textContent = "❌";
     btn.addEventListener("click", () => db.collection("requests").doc(doc.id).delete());
