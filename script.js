@@ -1,4 +1,4 @@
-// ✅ No firebaseConfig or firebase.initializeApp here!
+// ✅ Firebase already initialized in HTML
 const db = firebase.firestore();
 
 const foodCardArray = document.getElementById("foodCardArray");
@@ -65,6 +65,7 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
           <option value="German">German</option>
           <option value="Olivia">Olivia</option>
         </select>
+        <input type="text" class="customName" placeholder="Or type your name...">
         <select class="emoji">
           <option value="💬">💬</option>
           <option value="🌶️">🌶️</option>
@@ -77,14 +78,18 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
           <option value="🥶">🥶</option>
           <option value="😀">😀</option>
         </select>
-        <input type="text" placeholder="Add comment...">
+        <input type="text" class="commentText" placeholder="Add comment...">
         <button>Add</button>
       </div>
     `;
 
-    // ⭐ Star rating
+    // ⭐ Highlight stars based on current average
     const stars = card.querySelectorAll(".stars span");
     stars.forEach(star => {
+      const starValue = parseInt(star.dataset.star);
+      if (food.stars >= starValue - 0.5) star.classList.add("active");
+      else star.classList.remove("active");
+
       star.addEventListener("click", async () => {
         const rating = parseInt(star.dataset.star);
         const total = (food.totalRatings || 0) + 1;
@@ -99,19 +104,23 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
 
     // 💬 Add comment
     const commentBtn = card.querySelector(".comment-input button");
-    const commentInput = card.querySelector(".comment-input input");
+    const commentInput = card.querySelector(".commentText");
     const commenterSelect = card.querySelector(".comment-input .commenter");
+    const customNameInput = card.querySelector(".customName");
     const emojiSelect = card.querySelector(".comment-input .emoji");
 
     commentBtn.addEventListener("click", async () => {
       const text = commentInput.value.trim();
-      const name = commenterSelect.value || "Guest";
+      let name = customNameInput.value.trim() || commenterSelect.value || "Guest";
       const emoji = emojiSelect.value || "💬";
       if (!text) return;
 
       const comments = food.comments || [];
       comments.push({ name, text, emoji });
       await db.collection("foods").doc(id).update({ comments });
+
+      commentInput.value = "";
+      customNameInput.value = "";
     });
 
     foodCardArray.appendChild(card);
