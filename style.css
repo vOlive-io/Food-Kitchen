@@ -1,130 +1,165 @@
-@import url('https://fonts.googleapis.com/css2?family=Delius&family=Oregano:ital@0;1&display=swap');
-
+/* === Base Styles === */
 body {
-  font-family: 'Delius', 'Oregano', cursive;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #1a1a1a;
+  color: white;
+  text-align: center;
+}
+
+header {
+  background: linear-gradient(90deg, #ff9966, #ff5e62);
   padding: 20px;
-  max-width: 1200px;
-  margin: auto;
-  background: #fffaf5;
+  border-bottom: 4px solid #fff3;
 }
 
 h1 {
-  text-align: center;
-  margin-bottom: 20px;
+  margin: 0;
+  font-size: 2.5em;
 }
 
-/* 🧭 Tabs */
-.tabs {
+h2 {
+  margin-top: 40px;
+  color: #ffdfc4;
+}
+
+/* === Add Food Form === */
+#addFoodSection {
+  background: #2a2a2a;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+#addFoodForm {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 15px;
-}
-.tabs button {
-  border: none;
-  background: #eee;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-.tabs button.active {
-  background: #333;
-  color: white;
+  justify-content: center;
 }
 
-/* 🍱 Food Grid */
+#addFoodForm input,
+#addFoodForm select,
+#addFoodForm button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
+}
+
+#addFoodForm button {
+  background: #ff5e62;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#addFoodForm button:hover {
+  background: #ff9966;
+}
+
+/* === Food Grid === */
 #foodCardArray {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 20px;
 }
 
-/* 🍽️ Food Card */
+/* === Food Card === */
 .foodCard {
-  border-radius: 18px;
-  border: 2px solid black;
+  border-radius: 16px;
   padding: 15px;
-  color: #000;
-  overflow: hidden;
+  color: white;
   text-align: center;
-  transition: all 0.25s;
-  box-shadow: 3px 3px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
 }
+
 .foodCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 4px 4px 15px rgba(0,0,0,0.2);
+  transform: scale(1.03);
 }
+
 .foodCard img {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 10px;
+  border-radius: 10px;
 }
 
-/* 🍛 Category Gradients */
-.spicy { background: linear-gradient(135deg, #ff4d00, #ff1e1e); }
-.savory { background: linear-gradient(135deg, #ffe066, #ffcc00); }
-.sweet { background: linear-gradient(135deg, #ffb8e2, #ff70b9); }
-.cool { background: linear-gradient(135deg, #9ee7ff, #006eff); color: white; }
-.greens { background: linear-gradient(135deg, #b6ff7a, #00c45a); color: black; }
+.no-image {
+  width: 100%;
+  height: 180px;
+  background: #ffffff22;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
 
-/* ⭐ Ratings */
+/* === Gradients by Category === */
+.foodCard.Spicy { background: linear-gradient(135deg, #ff4b1f, #ff9068); }
+.foodCard.Savory { background: linear-gradient(135deg, #f9d423, #ff4e50); }
+.foodCard.Sweet { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
+.foodCard.Cool { background: linear-gradient(135deg, #83a4d4, #b6fbff); color: #222; }
+.foodCard.Greens { background: linear-gradient(135deg, #56ab2f, #a8e063); }
+
+/* === Ratings & Comments === */
 .stars span {
-  font-size: 22px;
+  font-size: 24px;
   cursor: pointer;
-  color: lightgray;
   transition: color 0.2s;
 }
-.stars span.active { color: gold; }
+
+.stars span:hover {
+  color: gold;
+}
+
 .rating-display {
-  font-weight: bold;
   margin: 5px 0;
+  font-weight: bold;
 }
 
-/* 💬 Comments */
-.comments {
-  background: rgba(255,255,255,0.7);
-  border-radius: 8px;
-  padding: 8px;
-  max-height: 120px;
-  overflow-y: auto;
-  text-align: left;
-}
-.comment {
-  margin: 4px 0;
-  font-size: 14px;
-}
-
-/* ✏️ Comment input */
 .comment-input {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
   margin-top: 10px;
 }
-.comment-input select,
-.comment-input input {
+
+.comment-input input,
+.comment-input select {
+  padding: 6px;
+  margin: 4px;
   border-radius: 6px;
-  border: 1.5px solid #333;
-  padding: 6px;
+  border: none;
 }
+
 .comment-input button {
-  background: black;
-  color: white;
-  border-radius: 8px;
-  padding: 6px;
+  background: #fff;
+  color: #333;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s;
 }
-.comment-input button:hover { background: #333; }
 
-/* 🧾 Sections */
-.active-section { display: block; }
-section:not(.active-section) { display: none; }
+.comments {
+  text-align: left;
+  margin-top: 8px;
+  background: #ffffff33;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 0.9em;
+}
 
-.customName { display: none; }
-.showCustom .customName { display: block; }
+.comment {
+  margin: 4px 0;
+  word-wrap: break-word;
+}
+
+/* === Footer === */
+footer {
+  margin-top: 40px;
+  padding: 20px;
+  background: #111;
+  color: #bbb;
+}
