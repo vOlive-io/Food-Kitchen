@@ -1,186 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Delius&family=Oregano:ital@0;1&display=swap');
+
 body {
-  background: #fffaf4;
-  font-family: "Comic Sans MS", cursive;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+  font-family: 'Delius', 'Oregano', cursive;
+  background: #fffaf5;
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+  color: #333;
 }
 
+/* 🌐 Tabs */
 .tabs {
   display: flex;
   justify-content: center;
-  background: #ffd7a3;
-  padding: 10px;
+  margin-bottom: 20px;
   gap: 10px;
 }
 
 .tabs button {
-  border: none;
-  background: #fff3d1;
+  background: #ffe0b3;
+  border: 2px solid #ffb84d;
+  border-radius: 12px;
   padding: 10px 20px;
-  border-radius: 10px;
-  font-size: 16px;
+  font-size: 1.1em;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.2s ease-in-out;
 }
 
 .tabs button.active {
-  background: #ffae42;
+  background: #ffb84d;
   color: white;
+  transform: scale(1.05);
 }
 
-section {
+/* 🧾 Tab Sections */
+main.tab-content {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.tab-section {
   display: none;
+  opacity: 0;
   padding: 20px;
+  transition: opacity 0.3s ease;
 }
 
-.active-section {
+.tab-section.active-section {
   display: block;
+  opacity: 1;
 }
 
+/* 🍔 Add Food Box */
 .addFoodBox, .addRequestBox {
-  background: #ffeecf;
-  padding: 15px;
-  border-radius: 15px;
-  display: inline-block;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.addFoodBox input, .addRequestBox input, select {
+.addFoodBox input,
+.addRequestBox input,
+.addFoodBox select {
   padding: 8px;
-  margin: 5px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
-.addFoodBox button, .addRequestBox button {
-  padding: 8px 15px;
-  border: none;
+  border: 2px solid #ccc;
   border-radius: 10px;
-  background: #ffae42;
-  color: white;
-  cursor: pointer;
+  font-size: 1em;
 }
 
+.addFoodBox button,
+.addRequestBox button {
+  background: #ffb84d;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.addFoodBox button:hover,
+.addRequestBox button:hover {
+  background: #ffa31a;
+  transform: scale(1.05);
+}
+
+/* 🍱 Food Grid */
 #foodCardArray {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  margin: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+  justify-items: center;
 }
 
+/* 🍲 Food Cards */
 .foodCard {
-  border-radius: 15px;
+  width: 100%;
+  max-width: 280px;
+  border-radius: 18px;
   padding: 15px;
+  border: 2.5px solid #333;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   text-align: center;
-  color: white;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  color: #222;
+  transition: transform 0.2s;
 }
 
+.foodCard:hover {
+  transform: translateY(-5px);
+}
+
+/* 🌶️ Flavor Gradients */
+.spicy {
+  background: linear-gradient(135deg, #ff5c5c, #ff9966);
+}
+.savory {
+  background: linear-gradient(135deg, #ffeb99, #ffd966);
+}
+.sweet {
+  background: linear-gradient(135deg, #ffc2d1, #ffa6c9);
+}
+.cool {
+  background: linear-gradient(135deg, #99e6ff, #b3f0ff);
+}
+.greens {
+  background: linear-gradient(135deg, #b8f5b1, #8ee68a);
+}
+
+/* 🖼️ Images */
 .foodCard img {
   width: 100%;
+  height: 160px;
+  object-fit: cover;
   border-radius: 12px;
-  margin: 10px 0;
+  margin-top: 10px;
+  border: 2px solid rgba(255,255,255,0.7);
 }
 
-/* Flavor gradients */
-.spicy {
-  background: linear-gradient(135deg, #ff5b5b, #ff9966);
+/* ⭐ Ratings */
+.stars span {
+  font-size: 22px;
+  cursor: pointer;
+  color: lightgray;
+  transition: color 0.2s;
 }
 
-.savory {
-  background: linear-gradient(135deg, #ffd95b, #ffae42);
-}
-
-.sweet {
-  background: linear-gradient(135deg, #ff9ae2, #ffc2e2);
-}
-
-.cool {
-  background: linear-gradient(135deg, #9bd4ff, #a0e6ff);
-}
-
-.greens {
-  background: linear-gradient(135deg, #98f5b2, #59c97a);
+.stars span.active {
+  color: gold;
 }
 
 .rating-display {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #fff;
+  margin-top: 8px;
+  font-weight: bold;
 }
 
-.stars span {
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.stars span:hover {
-  transform: scale(1.2);
-}
-
+/* 💬 Comments */
 .comment-input {
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
-.comment-input input, .comment-input select {
-  border: none;
-  border-radius: 6px;
-  padding: 5px;
+.comment-input input,
+.comment-input select {
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 6px;
+  font-size: 0.9em;
 }
 
 .comment-input button {
-  background: white;
-  color: black;
-  border-radius: 6px;
+  background: #ffb84d;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
 }
 
 .comment-input button:hover {
-  background: #fff8e7;
+  background: #ffa31a;
+}
+
+.comments {
+  margin-top: 10px;
+  text-align: left;
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+  padding: 6px 10px;
+  max-height: 120px;
+  overflow-y: auto;
 }
 
 .comment {
-  background: rgba(255,255,255,0.2);
-  padding: 5px;
-  border-radius: 8px;
-  margin-top: 4px;
+  margin-bottom: 5px;
 }
 
-/* Requests styling */
+/* 📋 Requests List */
 #requestsList {
-  list-style: none;
+  list-style-type: none;
   padding: 0;
-  margin: 10px auto;
-  max-width: 600px;
 }
 
 #requestsList li {
-  background: #fff3d1;
-  padding: 10px;
-  margin: 8px 0;
+  background: #ffe5b4;
   border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Delius', cursive;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-#requestsList button {
-  background: #ff8080;
+#requestsList li button {
+  background: none;
   border: none;
-  border-radius: 6px;
-  color: white;
   cursor: pointer;
-  padding: 4px 8px;
-}
-
-#requestsList button:hover {
-  background: #ff4d4d;
+  font-size: 18px;
 }
