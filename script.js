@@ -46,9 +46,12 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
                    food.flavor === "savory" ? "🍗" :
                    food.flavor === "sweet" ? "🍰" : "🧊";
 
+    const avgRating = food.totalRatings > 0 ? (food.stars).toFixed(1) : "0.0";
+
     card.innerHTML = `
       <h2>${food.name} ${emoji}</h2>
       ${food.image ? `<img src="${food.image}" alt="${food.name}">` : ""}
+      <div class="rating-display">⭐ ${avgRating}/5 : ${food.totalRatings || 0} ratings</div>
       <div class="stars">${[1,2,3,4,5].map(i=>`<span data-star="${i}">★</span>`).join('')}</div>
       <div class="comments">
         ${(food.comments || []).map(c => `<div class="comment">${c.emoji} <b>${c.name}</b>: ${c.text}</div>`).join('')}
