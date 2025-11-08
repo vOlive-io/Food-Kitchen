@@ -1,3 +1,5 @@
+// 🔥 Initialize Firebase with injected secrets
+firebase.initializeApp(window.firebaseConfig);
 const db = firebase.firestore();
 
 // Tabs
@@ -53,15 +55,13 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
     const id = doc.id;
     const avgRating = food.totalRatings > 0 ? food.stars.toFixed(1) : "0.0";
 
-    // 🌶️ Flavor emoji mapping
-    const emoji = food.flavor === "spicy" ? "🌶️" :
-                   food.flavor === "savory" ? "🍗" :
-                   food.flavor === "sweet" ? "🍰" :
-                   food.flavor === "cool" ? "🧊" :
-                   food.flavor === "greens" ? "🥬" :
-                   food.flavor === "warm" ? "🍜" : "🍽️";
+    const emoji =
+      food.flavor === "spicy" ? "🌶️" :
+      food.flavor === "savory" ? "🍗" :
+      food.flavor === "sweet" ? "🍰" :
+      food.flavor === "cool" ? "🧊" :
+      food.flavor === "greens" ? "🥬" : "🍜";
 
-    // 🍱 Create card
     const card = document.createElement("div");
     card.classList.add("foodCard", food.flavor);
     card.innerHTML = `
@@ -80,7 +80,6 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
           <option value="Olive">Olive</option>
           <option value="German">German</option>
           <option value="Olivia">Olivia</option>
-          <option value="Olivia">Lulu</option>
           <option value="custom">Custom</option>
         </select>
         <input type="text" class="customName" placeholder="Enter custom name..." style="display:none;">
@@ -101,9 +100,8 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
       </div>
     `;
 
-    // ⭐ Handle star ratings
-    const stars = card.querySelectorAll(".stars span");
-    stars.forEach(star => {
+    // ⭐ Handle star rating
+    card.querySelectorAll(".stars span").forEach(star => {
       star.addEventListener("click", async () => {
         const rating = parseInt(star.dataset.star);
         const total = (food.totalRatings || 0) + 1;
@@ -112,14 +110,14 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
       });
     });
 
-    // 👤 Handle custom name visibility
+    // 💬 Handle custom name
     const commenterSelect = card.querySelector(".commenter");
     const customNameInput = card.querySelector(".customName");
     commenterSelect.addEventListener("change", () => {
       customNameInput.style.display = commenterSelect.value === "custom" ? "block" : "none";
     });
 
-    // 💬 Handle adding comments
+    // 💬 Handle comments
     const commentBtn = card.querySelector(".comment-input button");
     commentBtn.addEventListener("click", async () => {
       const text = card.querySelector(".commentText").value.trim();
@@ -138,7 +136,7 @@ db.collection("foods").orderBy("created", "desc").onSnapshot(snapshot => {
   });
 });
 
-// 🧾 Requests tab
+// Requests
 const addRequestBtn = document.getElementById("addRequest");
 const requestsList = document.getElementById("requestsList");
 
@@ -152,7 +150,6 @@ addRequestBtn.addEventListener("click", async () => {
   document.getElementById("requestInput").value = "";
 });
 
-// Display requests
 db.collection("requests").orderBy("created", "desc").onSnapshot(snapshot => {
   requestsList.innerHTML = "";
   if (snapshot.empty) {
