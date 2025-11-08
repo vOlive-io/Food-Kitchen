@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # ✅ required for committing changes
+  contents: write
   actions: read
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Replace Firebase secrets in config
         run: |
-          cat > src/firebaseConfig.js <<EOF
+          cat > firebaseConfig.js <<EOF
           export const firebaseConfig = {
             apiKey: "${{ secrets.FIREBASE_API_KEY }}",
             authDomain: "${{ secrets.FIREBASE_AUTH_DOMAIN }}",
@@ -35,6 +35,6 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git add src/firebaseConfig.js
+          git add firebaseConfig.js
           git commit -m "Inject Firebase secrets" || echo "No changes to commit"
           git push
