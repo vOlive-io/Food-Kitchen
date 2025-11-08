@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Food Kitchen</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Food Kitchen 🍽️</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header>
+    <button id="foodsTab" class="active">🍲 Foods</button>
+    <button id="requestsTab">📋 Requests</button>
+  </header>
 
-  <div class="tabs">
-    <button id="foodsTab" class="active">Foods</button>
-    <button id="requestsTab">Requests</button>
-  </div>
+  <!-- Foods Section -->
+  <section id="foodsSection" class="active-section">
+    <div class="add-food-form">
+      <input type="text" id="foodName" placeholder="Food name" />
+      <input type="text" id="foodImage" placeholder="Image URL (optional)" />
+      <select id="foodFlavor">
+        <option value="">Select flavor</option>
+        <option value="spicy">🌶️ Spicy</option>
+        <option value="savory">🍗 Savory</option>
+        <option value="sweet">🍰 Sweet</option>
+        <option value="cool">🧊 Cool</option>
+        <option value="greens">🥬 Greens</option>
+        <option value="warm">🍜 Warm</option>
+      </select>
+      <button id="addFood">Add Food</button>
+    </div>
 
-  <main class="tab-content">
-    <section id="foodsSection" class="tab-section active-section">
-      <div class="addFoodBox">
-        <input id="foodName" type="text" placeholder="Food name">
-        <input id="foodImage" type="text" placeholder="Image URL">
-        <select id="foodFlavor">
-          <option value="">Select flavor</option>
-          <option value="spicy">Spicy 🌶️</option>
-          <option value="savory">Savory 🍗</option>
-          <option value="sweet">Sweet 🍰</option>
-          <option value="cool">Cool 🧊</option>
-          <option value="greens">Greens 🥬</option>
-          <option value="warm">Warm 🍜</option>
-        </select>
-        <button id="addFood">Add Food</button>
-      </div>
-      <div id="foodCardArray"></div>
-    </section>
+    <div id="foodCardArray" class="food-grid"></div>
+  </section>
 
-    <section id="requestsSection" class="tab-section">
-      <div class="addRequestBox">
-        <input id="requestInput" type="text" placeholder="Request a food idea...">
-        <button id="addRequest">Submit</button>
-      </div>
-      <ul id="requestsList"></ul>
-    </section>
-  </main>
+  <!-- Requests Section -->
+  <section id="requestsSection">
+    <div class="add-request-form">
+      <input type="text" id="requestInput" placeholder="Add a request..." />
+      <button id="addRequest">Submit Request</button>
+    </div>
+    <ul id="requestsList"></ul>
+  </section>
 
-  <script src="firebase-config.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  
+  <!-- Main Script -->
   <script src="script.js"></script>
-
 </body>
 </html>
