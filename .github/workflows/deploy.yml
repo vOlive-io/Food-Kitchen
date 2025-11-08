@@ -1,4 +1,4 @@
-name: Build and Deploy (with Firebase Secrets)
+name: Inject Firebase Secrets into Build
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  inject-secrets:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +23,10 @@ jobs:
           sed -i "s|__FIREBASE_APP_ID__|${{ secrets.FIREBASE_APP_ID }}|g" firebase-config.js
           sed -i "s|__FIREBASE_MEASUREMENT_ID__|${{ secrets.FIREBASE_MEASUREMENT_ID }}|g" firebase-config.js
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+      - name: Commit updated config back to repo
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add firebase-config.js
+          git commit -m "Inject Firebase secrets" || echo "No changes to commit"
+          git push
